@@ -1,0 +1,31 @@
+:root {
+  --colorPrimario:       #8CBD2A;
+  --colorSecundario:     #2E7D32;
+  --colorFondo:          #F6F4EB;
+  --grisBarraSuperior:   #FFFFFF;
+  }
+
+body {
+  margin: 0;
+  font-family:  'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--colorFondo);
+  min-height: 100vh
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.tituloPagina{
+  color: var(--colorSecundario);
+}
+
+.tituloCarga{
+  color: var(--colorSecundario);
+  font-weight: 600;
+}

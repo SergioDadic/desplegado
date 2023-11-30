@@ -1,0 +1,16 @@
+.columnaLeyenda {
+    flex-basis: 50%; 
+}
+  
+.columnaLeyenda img {
+    margin-bottom: 10px; /* Espaciado entre la imagen y la etiqueta */
+}
+  
+/* Estilo para las etiquetas */
+.s label {
+    max-width: 100px; /* Ancho máximo para las etiquetas */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 10px; /* Espaciado entre las etiquetas */
+}

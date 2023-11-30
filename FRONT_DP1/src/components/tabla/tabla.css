@@ -1,0 +1,8 @@
+@import "../../index.css"; 
+
+
+.cabecera{
+  color: var(--colorSecundario); /* Cambia el color del texto si es necesario */
+  font-weight: bold;
+  
+}

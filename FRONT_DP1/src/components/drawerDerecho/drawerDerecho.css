@@ -1,0 +1,40 @@
+.contenedorFinalDrawer {
+  display: grid;
+  grid-template-columns: 40% 60%;
+}
+
+.infoSimulacion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.infoLeyenda {
+  display: grid;
+  grid-template-columns: 25px 140px;
+  justify-content: center;
+  align-items: center;
+  row-gap: 15px;
+}
+
+.infoLeyenda label {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.infoLeyenda img {
+  width: 15px;
+  height: auto;
+}
+
+.leyenda{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+ .leyenda .titulo{
+  color: #2E7D32;
+  font-weight: 600;
+ }

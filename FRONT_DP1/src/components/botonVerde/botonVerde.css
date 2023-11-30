@@ -1,0 +1,7 @@
+.contenedorBotonVerde{
+    display: flex;
+    justify-content: flex-end; /* Alinea el contenido (el botón) hacia la izquierda */
+    align-items: center; /* Centra verticalmente el contenido en el contenedor */
+    padding-right: 3%;
+    padding-bottom: 2%;
+}

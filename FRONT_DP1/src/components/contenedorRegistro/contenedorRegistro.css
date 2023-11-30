@@ -1,0 +1,18 @@
+.distribucionRegistro {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 48% 48%;
+  gap: 20px;
+}
+
+.distribucionMantenimientoFiltros {
+  display: grid;
+  grid-template-columns: 37% 30% 30%;
+  gap: 15px;
+}
+
+.distribucionMantenimiento {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
