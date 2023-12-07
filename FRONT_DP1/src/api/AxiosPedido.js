@@ -16,7 +16,7 @@ export const axiosSetPedido = (body) => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.post("/api/v1/Pedido/guardar", body);
+  return axiosClient.post("/back/api/v1/Pedido/guardar", body);
 };
 
 export const axiosGetPedido = () => {
@@ -34,14 +34,14 @@ export const axiosGetPedido = () => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.get("/api/v1/Pedido/leer");
+  return axiosClient.get("/back/api/v1/Pedido/leer");
 };
 
 export const axiosCargaMasivaPedidos = (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  return axios.post("api/v1/Pedido/CargaMasivaPedidos", formData, {
+  return axios.post("back/api/v1/Pedido/CargaMasivaPedidos", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -63,7 +63,7 @@ export const axiosSetCargaMasivaPedidos = (formData) => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.post("api/v1/Pedido/CargaMasivaPedidos", formData, {
+  return axiosClient.post("back/api/v1/Pedido/CargaMasivaPedidos", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

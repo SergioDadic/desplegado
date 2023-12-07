@@ -15,7 +15,7 @@ export const axiosSetAveria = (body) => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.post("api/v1/Averia/guardar", body);
+  return axiosClient.post("back/api/v1/Averia/guardar", body);
 };
 
 export const axiosGetAveria = () => {
@@ -33,5 +33,5 @@ export const axiosGetAveria = () => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.get("api/v1/Averia/leer");
+  return axiosClient.get("back/api/v1/Averia/leer");
 };

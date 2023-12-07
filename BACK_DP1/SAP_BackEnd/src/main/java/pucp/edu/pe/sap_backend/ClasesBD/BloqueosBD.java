@@ -48,6 +48,22 @@ public class BloqueosBD {
         this.pos_x = pos_x;
         this.pos_y = pos_y;
     }
+
+    public BloqueosBD(int id,int YYYYIni, int MMDDIni, int hhmmIni,int YYYYFin, int MMDDFin, int hhmmFin, double pos_x, double pos_y) {
+        String aux= createDate(YYYYIni,MMDDIni/100,MMDDIni%100,hhmmIni/100,hhmmIni%100);
+        String aux2= createDate(YYYYFin,MMDDFin/100,MMDDFin%100,hhmmFin/100,hhmmFin%100);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime fechaRecibida1 = LocalDateTime.parse(aux,formatter);
+        LocalDateTime fechaRecibida2 = LocalDateTime.parse(aux2,formatter);
+        this.id=id;
+        this.inicioBloqueo = fechaRecibida1;
+        this.finBloqueo = fechaRecibida2;
+        this.pos_x = pos_x;
+        this.pos_y = pos_y;
+    }
+
+
     public BloqueosBD(double pos_x, double pos_y) {
         this.pos_x = pos_x;
         this.pos_y = pos_y;

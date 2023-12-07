@@ -26,8 +26,7 @@ const style = {
 };
 
 export default function SoliAveriaSi(props) {
-  const { fechaTP, valorSeleccionado, dateAux } = props;
-
+  const { fechaTP, valorSeleccionado, dateAux,scale} = props;
   const navigate = useNavigate();
 
   /** MANEJO DE FECHAS **/
@@ -104,12 +103,13 @@ export default function SoliAveriaSi(props) {
   //Continuar sin registrar
   const handleContinue = () => {
     const auxDate = fechaTP.toDate();
-    axiosInicializaSimulacion(7, formatDate(fechaTP))
+    axiosInicializaSimulacion(7, formatDate(fechaTP)) //AQUI
       .then(() => {
         navigate("/Simulacion", {
           state: {
             valorSeleccionado,
             auxDate, //dateAux,
+            scale,
           },
         });
       })

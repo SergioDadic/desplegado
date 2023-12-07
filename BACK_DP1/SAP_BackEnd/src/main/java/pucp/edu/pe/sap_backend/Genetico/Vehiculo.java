@@ -1,16 +1,14 @@
 package pucp.edu.pe.sap_backend.Genetico;
 
 import org.springframework.util.RouteMatcher;
+import pucp.edu.pe.sap_backend.ClasesBD.AveriaBD;
 import pucp.edu.pe.sap_backend.Ruta.BFS;
 import pucp.edu.pe.sap_backend.Ruta.Cell;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 //@AllArgsConstructor
@@ -85,6 +83,10 @@ public class Vehiculo {
     private LinkedList<Pedido> deliveredOrder;
     private int lastIndexRoute ;
 
+    private AveriaBD averiaAsignada;
+
+    private int estaAveriado = 1;
+
     public Vehiculo(int id, int type, int x, int y,double tara, double cargaGLP,double pesoCargaGLP,double pesoCombinado, String tipo) {
         this.id = id;
         this.capacity = (int) cargaGLP;
@@ -157,6 +159,14 @@ public class Vehiculo {
         this.route = route;
     }
 
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
     public LinkedList<Pedido> getDeliveredOrder() {return deliveredOrder;}
 
     public void setDeliveredOrder(LinkedList<Pedido> deliveredOrder) {this.deliveredOrder = deliveredOrder;}
@@ -192,6 +202,8 @@ public class Vehiculo {
             this.order.get(i-1).setAssigned(1);
         }
     }
+
+
     public double distance(double xOther,double yOther){
         return Math.sqrt(((this.x-xOther)*(this.x-xOther)))+ Math.sqrt(((this.y-yOther)*(this.y-yOther)));
     }
@@ -209,13 +221,19 @@ public class Vehiculo {
         int speed = 50;
         Cell auxCell = null;
 
-        for(Pedido order: this.order){
+//
+
+        Iterator<Pedido> orderIteraor = this.order.iterator();
+        while(orderIteraor.hasNext()){
+            Pedido order = orderIteraor.next();
             auxEnd[0]=order.getX();auxEnd[1]=order.getY();
             if(auxstart[0]==auxEnd[0] && auxstart[1]==auxEnd[1]) continue; //VERIFICO QUE NO SE VAYA AL MISMO PUNTO
 
             auxPath = blocks.shortestPath(auxstart, auxEnd, currentTime,this.type,auxCell);
+
             if(auxPath==null){
-                System.out.println("aaa");
+                orderIteraor.remove();
+                continue;
             }
             minutes = auxPath.getLast().dist*60/speed;
             currentTime = currentTime.plusMinutes(minutes);
@@ -227,14 +245,50 @@ public class Vehiculo {
                 auxPath.getLast().prev.prev=null;
                 auxCell=auxPath.getLast().prev;
             }else{ auxCell=null;}
+
         }
         auxEnd[0]=almacenX;auxEnd[1]=almacenY;
         auxPath = blocks.shortestPath(auxstart, auxEnd, currentTime,this.type,null);
+        if(auxPath== null){
+            System.out.println("aaa");
+        }
         auxPath.remove();
         this.route.addAll(auxPath);
+
+//        for(Pedido order: this.order){
+//            auxEnd[0]=order.getX();auxEnd[1]=order.getY();
+//            if(auxstart[0]==auxEnd[0] && auxstart[1]==auxEnd[1]) continue; //VERIFICO QUE NO SE VAYA AL MISMO PUNTO
+//
+//            auxPath = blocks.shortestPath(auxstart, auxEnd, currentTime,this.type,auxCell);
+//
+//            if(auxPath==null){
+//                //auxPath = blocks.shortestPath(auxstart, auxEnd, currentTime,this.type,auxCell);
+//                //(AQUI)
+//                System.out.println("aaa");
+//            }
+//            minutes = auxPath.getLast().dist*60/speed;
+//            currentTime = currentTime.plusMinutes(minutes);
+//            auxPath.remove();
+//            this.route.addAll(auxPath);
+//            auxstart[0]=order.getX();
+//            auxstart[1]=order.getY();
+//            if(!auxPath.isEmpty() && auxPath.getLast().blocked){
+//                auxPath.getLast().prev.prev=null;
+//                auxCell=auxPath.getLast().prev;
+//            }else{ auxCell=null;}
+//        }
+//        auxEnd[0]=almacenX;auxEnd[1]=almacenY;
+//        auxPath = blocks.shortestPath(auxstart, auxEnd, currentTime,this.type,null);
+//        auxPath.remove();
+//        this.route.addAll(auxPath);
     }
     public void addOrder(Pedido order) {
         //this.totalOrders.add(order);
+
+        ///NUEVO
+        order.setAssigned(1);
+        this.order.add(order);
+        //
         this.lastMovement = order.getHhmm();
     }
 

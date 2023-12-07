@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/v1/Averia")
+@RequestMapping("/back")
 public class AveriaBDController {
     @Autowired
     private final AveriaBDService averiaBDService;
@@ -50,13 +50,13 @@ public class AveriaBDController {
 //        return averiaBDRepository.saveAndFlush(averia);
 //    }
 
-    @GetMapping("/leer")
+    @GetMapping("/api/v1/Averia/leer")
     List<AveriaBD> listarAveriaBD(){
         return averiaBDService.listar();
     }
 
 
-    @PostMapping("/nueva_averia")
+    @PostMapping("/api/v1/Averia/nueva_averia")
     public AveriaBD nuevaAveria(@RequestBody AveriaBD nuevaAveriaBD){
 
         String nombreCamion=" ";
@@ -166,7 +166,7 @@ public class AveriaBDController {
 
     }
 
-    @PostMapping("/cargarAveria")
+    @PostMapping("/api/v1/Averia/cargarAveria")
     public String cargaMasivaDeAverias(@RequestParam("file")MultipartFile file) throws Exception{
         if(file.isEmpty()){
             return "El archivo está vacio";

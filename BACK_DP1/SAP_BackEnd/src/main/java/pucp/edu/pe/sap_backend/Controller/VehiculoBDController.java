@@ -15,7 +15,7 @@ import pucp.edu.pe.sap_backend.Service.VehiculoBDService;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/v1/Vehiculo")
+@RequestMapping("/back")
 public class VehiculoBDController {
     @Autowired
     private final VehiculoBDService vehiculoBDService;
@@ -28,7 +28,7 @@ public class VehiculoBDController {
         this.vehiculoBDRepository = vehiculoBDRepository;
     }
 
-    @PostMapping("/guardar")
+    @PostMapping("/api/v1/Vehiculo/guardar")
     VehiculoBD guardarVehiculo(@RequestBody Map<String,Object>nuevoVehiculo){
         log.info("Agregando vehiculo...");
         var json = new JSONObject(nuevoVehiculo);

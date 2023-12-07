@@ -13,10 +13,16 @@ import RegistroBloqueo from "./pages/registroBloqueo";
 import RegistroMantenimiento from "./pages/registroMantenimiento";
 import GrillaSimulacion from "./pages/grilla";
 import Operacion from "./pages/operacion";
+import CargaArchivos from "./pages/cargaArchivos";
+import Flota from "./pages/flota";
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <CargaArchivos />,
+  },
+  {
+    path: "/Seguimiento",
     element: <Seguimiento />,
   },
   {
@@ -62,6 +68,10 @@ const router = createBrowserRouter([
   {
     path: "/Operacion",
     element: <Operacion />,
+  },
+  {
+    path: "/Flota",
+    element: <Flota />,
   },
 ]);
 

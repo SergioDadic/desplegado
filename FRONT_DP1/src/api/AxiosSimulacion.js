@@ -15,10 +15,10 @@ export const axiosInicializaSimulacion = (duracion,fechaInicio) => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.get(`/api/v1/simulacion/genetico/iniciacion?durarion=${duracion}&fechaInicio=${fechaInicio}`);
+  return axiosClient.get(`/back/api/v1/simulacion/genetico/iniciacion?durarion=${duracion}&fechaInicio=${fechaInicio}`);
 };
 
-export const axiosGetListaVehiculos = (limit,minutos) => {
+export const axiosGetListaVehiculos = (limit,minutos,continuidad) => {
     /*  */
     axiosClient.interceptors.request.use(
       async (config) => {
@@ -33,7 +33,7 @@ export const axiosGetListaVehiculos = (limit,minutos) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.get(`/api/v1/simulacion/listarVehiculos?limit=${limit}&minutos=${minutos}`);
+    return axiosClient.get(`/back/api/v1/simulacion/listarVehiculosFiltrado?limit=${limit}&minutos=${minutos}&continuidad=${continuidad}`);
   };
 
   export const axiosGetPedidosSeleccionados = () => {
@@ -51,7 +51,7 @@ export const axiosGetListaVehiculos = (limit,minutos) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.get("/api/v1/simulacion/listarPedidosSeleccionados");
+    return axiosClient.get("/back/api/v1/simulacion/listarPedidosSeleccionados");
   };
 
   export const axiosGetVehiculosDisponibles = () => {
@@ -69,7 +69,7 @@ export const axiosGetListaVehiculos = (limit,minutos) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.get("/api/v1/simulacion/listarVehiculosDisponibles");
+    return axiosClient.get("/back/api/v1/simulacion/listarVehiculosDisponibles");
   };
     
 
@@ -88,5 +88,23 @@ export const axiosGetListaVehiculos = (limit,minutos) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.get(`/api/v1/simulacion/listarVehiculosSeleccionados?tipo=${tipo}`);
+    return axiosClient.get(`/back/api/v1/simulacion/listarVehiculosSeleccionados?tipo=${tipo}`);
+  };
+
+  export const axiosSetFlota = (body) => {
+    /* */
+    axiosClient.interceptors.request.use(
+      async (config) => {
+        config.headers = {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          method: "POST",
+        };
+        return config;
+      },
+      (error) => {
+        Promise.reject(error.response.data);
+      }
+    );
+    return axiosClient.post("/back/api/v1/simulacion/inicializarVehiculos", body);
   };

@@ -50,6 +50,7 @@ public class AveriaBD {
     @Column(name = "vuelta", nullable = true)
     private int vuelta;
 
+    private int deArchivo;
 
     @Transient
     private int averiaCalculada;

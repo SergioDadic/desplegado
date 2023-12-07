@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/v1/Pedido")
+@RequestMapping("/back")
 public class PedidoBDController {
 
     @Autowired
@@ -36,24 +36,24 @@ public class PedidoBDController {
         this.pedidoBDRepository = pedidoBDRepository;
     }
 
-    @GetMapping("/leer")
+    @GetMapping("/api/v1/Pedido/leer")
     public List<PedidoBD> litarPedidosBD() {
         return pedidoBDService.listar();
     }
 
-    @PostMapping("/CargaMasivaPedidos")
+    @PostMapping("/api/v1/Pedido/CargaMasivaPedidos")
     public String cargaMasiva(@RequestParam("file") MultipartFile file) {
         return pedidoBDService.cargaMasivaParaPedidos(file);
     }
 
-    @GetMapping("/listarPedidosPorFecha")
+    @GetMapping("/api/v1/Pedido/listarPedidosPorFecha")
     public List<PedidoBD> listarPedidosPorFecha(@RequestParam String fechaInicio, @RequestParam String fechaFin) {
         LocalDateTime inicio = LocalDateTime.parse(fechaInicio, formatter);
         LocalDateTime fin = LocalDateTime.parse(fechaFin, formatter);
         return pedidoBDService.listarPedidosPorFechasParaSimulacion(inicio, fin);
     }
 
-    @PostMapping("/guardar")
+    @PostMapping("/api/v1/Pedido/guardar")
     PedidoBD guardarPedidoBD(@RequestBody Map<String, Object> nuevoPedido) {
         log.info("Agregando pedido...");
         var json = new JSONObject(nuevoPedido);

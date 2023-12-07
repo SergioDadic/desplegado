@@ -16,7 +16,7 @@ export const axiosSetBloqueo = (body) => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.post("api/v1/Bloqueo/guardar", body);
+  return axiosClient.post("back/api/v1/Bloqueo/guardar", body);
 };
 
 export const axiosGetBloqueo = () => {
@@ -34,18 +34,35 @@ export const axiosGetBloqueo = () => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.get("api/v1/Bloqueo/leer");
+  return axiosClient.get("back/api/v1/Bloqueo/leer");
 };
 
 export const axiosCargaMasivaBloqueos = (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  return axios.post("api/v1/Bloqueo/CargaMasivaBloqueos", formData, {
+  return axios.post("back/api/v1/Bloqueo/CargaMasivaBloqueos", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+};
+
+export const axiosGetListaBloqueos = (fechaInicio,fechaFin) => {
+  axiosClient.interceptors.request.use(
+    async (config) => {
+      config.headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        method: "GET",
+      };
+      return config;
+    },
+    (error) => {
+      Promise.reject(error.response.data);
+    }
+  );
+  return axiosClient.get(`/back/api/v1/Bloqueo/listarBloqueosPorFechas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
 };
 
 // export const axiosSetCargaMasivaBloqueos = (formData) => {
@@ -63,7 +80,7 @@ export const axiosCargaMasivaBloqueos = (file) => {
 //       Promise.reject(error.response.data);
 //     }
 //   );
-//   return axiosClient.post("api/v1/Bloqueo/CargaMasivaBloqueos", formData, {
+//   return axiosClient.post("back/api/v1/Bloqueo/CargaMasivaBloqueos", formData, {
 //     headers: {
 //       "Content-Type": "multipart/form-data",
 //     },

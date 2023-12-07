@@ -59,7 +59,7 @@ public class Pedido implements Comparable{
         this.x=x;
         this.y=y;
         this.nombrePedido = nombrePedido;
-        this.idPedido=idPedido;
+        this.idPedido=id;
         this.id=id;
         this.amount = cantidad;
         this.cantidadAEntregar=cantidad;

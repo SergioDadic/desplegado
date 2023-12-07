@@ -27,6 +27,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import axiosClient from "../api/AxiosClient";
 import { axiosSetCargaMasivaPedidos } from "../api/AxiosPedido";
 import MensajeExito from "../components/mensaje/mensajeExito";
+import useWindowDimensions from '../components/useWindowDimensions'; 
 
 const opciones = [
   { value: 1, label: "Semanal" },
@@ -177,34 +178,81 @@ function Seguimiento() {
 
   //Iniciar operacion dia a dia
   const handleClickOperacion = () => {
-    const auxDate = fechaTP.toDate();
-    let dia = auxDate.getDate().toString().padStart(2, "0");
-    let mes = (auxDate.getMonth() + 1).toString().padStart(2, "0");
-    let anio = auxDate.getFullYear();
-    let hora = auxDate.getHours().toString().padStart(2, "0");
-    let minuto = auxDate.getMinutes().toString().padStart(2, "0");
-    const fecha = `${anio}-${mes}-${dia} ${hora}:${minuto}`;
-    axiosInicializaSimulacion(1, fecha) //Colocar Fecha
+    axiosInicializaSimulacion(1, "2023-03-13 00:01") //Colocar Fecha
       .then(() => {
         setIniciado(true);
         navigate("/Operacion", {
           state: {
-            auxDate,
+            iniciado,
+            tiempoSimulacion,
           },
         });
       })
       .catch((error) => {
         console.error(`Error: ${error}`);
       });
+    // setMostrarComponente(true);
+    getHandshake();
+    const tiempoActual = new Date();
+    const nuevoTiempo = {
+      anio: tiempoActual.getFullYear(),
+      mes: tiempoActual.getMonth() + 1,
+      dia: tiempoActual.getDate(),
+      hora: tiempoActual.getHours(),
+      minuto: tiempoActual.getMinutes(),
+    };
+    manejarTiempo(nuevoTiempo);
+    if (iniciado) {
+      setSimulacionEnCurso(true);
+      navigate("/Operacion", {
+        state: {
+          // mostrarComponente,
+          simulacionEnCurso,
+          // valorSeleccionado,
+          iniciado,
+          tiempoSimulacion,
+        },
+      });
+    }
   };
 
-  //Después de cargar la avería
+  /**AXIOS**/
+  async function getHandshake() {
+    // return axiosInicializaSimulacion(1, fecha)
+    return axiosInicializaSimulacion(1, "2023-03-13 00:01")
+      .then(() => {
+        setIniciado(true);
+      })
+      .catch((error) => {
+        console.error(`Error: ${error}`);
+      });
+  }
+  const calcularScaleInicial = (windowWidth) => {
+    // Define tu lógica para calcular el scale inicial, podría ser proporcional al ancho de la ventana
+    return windowWidth / 130; // Este es solo un ejemplo, ajusta según tus necesidades
+  };
+
+  const widthV = useWindowDimensions(); // Asume que esta función obtiene las dimensiones de la ventana
+  const [scale, setScale] = useState(11); // Define una función para calcular el scale inicial
+
   useEffect(() => {
-    if (accionado) {
-      if (!valorSeleccionado) handleClickOperacion();
-      else handleClickSimu();
-    }
-  }, [accionado]);
+    //console.log("entra al useEffect", widthV, scale);
+    const initialScale = calcularScaleInicial(widthV);
+    //console.log("Initial Scale:", initialScale);
+    setScale(initialScale);
+  
+    const handleResize = () => {
+      const newScale = calcularScaleInicial(widthV);
+     // console.log("New Scale:", newScale);
+      setScale(newScale);
+    };
+  
+    window.addEventListener("resize", handleResize);
+  
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [widthV]);
 
   return (
     <div style={{ backgroundColor: colores.fondo, minHeight: "100vh" }}>
@@ -278,19 +326,22 @@ function Seguimiento() {
                     onCambiarValor={setValorSeleccionado}
                   />
                 </div>
-                <SoliAveriaSi
-                  fechaTP={fechaTP}
-                  valorSeleccionado={valorSeleccionado} //Semanal o Colapso
-                  dateAux={dateAux}
-                />
+                {scale ? (
+                  <SoliAveriaSi
+                    fechaTP={fechaTP}
+                    valorSeleccionado={valorSeleccionado}
+                    dateAux={dateAux}
+                    scale={scale}
+                  />
+                ) : null}
                 {/* <ModalAveria simuop={valorSeleccionado} setAccionado={setAccionado}/> */}
               </Grid>
             </Grid>
           </div>
-          <Divider light style={{ paddingTop: "16px" }} />
-          <ListSubheader style={{ backgroundColor: "#F6F4EB", border: "none" }}>
+          {/* <Divider light style={{ paddingTop: "16px" }} /> */}
+          {/* <ListSubheader style={{ backgroundColor: "#F6F4EB", border: "none" }}>
             Carga de información
-          </ListSubheader>
+          </ListSubheader> */}
           <div
             style={{
               display: "flex",
@@ -300,7 +351,7 @@ function Seguimiento() {
               alignItems: "center",
             }}
           ></div>
-          <div
+          {/* <div
             style={{
               display: "flex",
               flexDirection: "row",
@@ -327,20 +378,7 @@ function Seguimiento() {
                 Pedidos
               </Button>
             </div>
-            {/* <div
-              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-            >
-              <TextField type="file" onChange={handleFileChange} />
-              <Button
-                component="label"
-                variant="contained"
-                startIcon={<CloudUploadIcon />}
-                onClick={handleUploadAverias}
-              >
-                Averías
-              </Button>
-            </div> */}
-          </div>
+          </div> */}
         </Box>
       </Box>
       <Modal open={openModal} onClose={() => setOpenModal(false)}>

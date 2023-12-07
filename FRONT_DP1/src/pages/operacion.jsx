@@ -18,47 +18,7 @@ import Divider from "@mui/material/Divider";
 import CarCrashIcon from "@mui/icons-material/CarCrash";
 import ModalIncidencia from "../components/modal/modalIncidencia";
 import CollapsibleTable from "../components/tabla/tablaCollapsible";
-import { axiosGetListaVehiculos } from "../api/AxiosSimulacion";
-
-/*Variables globales genereales */
-//PARA LA TABLA
-let estructuraTabla = [];
-
-//GRILLA
-let objetoOperacion = {
-  coordenadasVehiculos: [],
-  lineaDeRutas: [],
-  puntosDeLlegada: [],
-  bloqueos: [],
-};
-let objetoBloqueos=[];
-
-//TIEMPOS
-let tiempo_actual_real_unix;
-let horasensegundos = 60;
-
-//Interrupciones
-let flag_reinicio = false;
-let flag_averia = false;
-let flag_final = false;
-let flag_nuevaSim = false;
-let flag_ = false;
-let msg_final;
-
-//Contadores
-let contador = 0 ;
-
-//Averías
-let averiados;
-
-//Fechas 
-let anio_f;
-let mes_f;
-let dia_f;
-let hora_f;
-let minuto_f;
-
-
+// import CollapsibleTable from "../components/tabla/tablaOperaciones";
 
 function Operacion() {
   const location = useLocation();
@@ -88,7 +48,7 @@ function Operacion() {
   }, [condicion]);
 
   //Manejo de la simulación
-  const [estructuraDibujo, setEstructuraDibujo] = useState(objetoOperacion);
+  //const [estructuraDibujo, setEstructuraDibujo] = useState(objetoOperacion);
 
   /************CRONOMETRO************/
   
@@ -99,20 +59,19 @@ function Operacion() {
       <Box sx={{ display: "flex" }}>
         <BarraSuperior />
         <Box component="main" sx={{ flexGrow: 1, p: 3, paddingTop: 8 }}>
-          <div style={{ display: "flex", flexDirection: "row", gap: "45%" }}>
-            <h2 className="tituloPagina">SEGUIMIENTO</h2>
-            <TiempoActual
-              fechaSeleccionada={fechaInicio}
-            />
+          <div style={{ display: "flex", flexDirection: "row", gap: "39%" }}>
+            <h2 style={{width:"50%"}} className="tituloPagina">OPERACIÓN DÍA A DÍA</h2>
+            <TiempoActual simulacionEnCurso={simulacionEnCurso} />
           </div>
           <div style={{ display: "flex", gap: "62%", paddingLeft: "1%" }}>
             <Grilla width={ancho} height={alto} scale={scale} />
-            <Simulacion
+            {/* <Simulacion
               ancho={ancho}
               alto={alto}
               escala={scale}
-              tiempoInicial={fechaInicio}
-            />
+              tiempoInicial={tiempoSimulacion}
+              // setInfoTabla={setInfoTabla}
+            /> */}
             <div
               style={{
                 display: "flex",

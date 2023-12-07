@@ -97,14 +97,15 @@ public class BFS {
         if(tipo==0)return;
         int dist = parent.dist + 1;
         long adicional = 5/6;
-        int newMinutes =  dist*6/5; //TIEMPO = DISTANCIA*VELOCIDAD
+        //int newMinutes =  dist*6/5; //TIEMPO = DISTANCIA*VELOCIDAD
         int minutes = tipo == 1? dist*2:dist;
-
-
+        int tiempoBaseXMovimiento = 72; //72 SEGUNDOS
+        int newSegundos = tiempoBaseXMovimiento*dist;
+        //SE MODIFICO ACA
         Cell p = cells[x][y];
-        boolean free = compareTime(this.map.getMap()[x][y],currentTime.plusMinutes(newMinutes),x,y);
+        boolean free = compareTime(this.map.getMap()[x][y],currentTime.plusSeconds(newSegundos),x,y);
         if(x==dx && y==dy){
-            blocked = compareTime(this.map.getMap()[parent.x][parent.y],currentTime.plusMinutes(newMinutes + 1),parent.x,parent.y);
+            blocked = compareTime(this.map.getMap()[parent.x][parent.y],currentTime.plusSeconds(newSegundos + 72),parent.x,parent.y);
         }
         if (dist < p.dist && (free || blocked)) {
             p.dist = dist;

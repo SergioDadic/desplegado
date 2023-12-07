@@ -10,6 +10,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -134,7 +135,11 @@ const rows = [
   createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
 ];
 
-export default function CollapsibleTable(infoTabla) {
+export default function CollapsibleTable() {
+  //Variables
+  let respuestaAux;
+  let respuesta_init_f;
+
   //Paginación tabla
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -147,26 +152,68 @@ export default function CollapsibleTable(infoTabla) {
   };
 
   //Variables para la tabla
-  const [tipo, setTipo] = React.useState(""); //Para filtrar
-  const [vehiculos, setVehiculos] = React.useState("");
+  const [tipo, setTipo] = React.useState("TA1"); //Para filtrar
+  let vehiculos = [];
+  // const [vehiculos,setVehiculos] = React.useState([]);
+
+  async function getVehiculos(tipo) {
+    return axiosGetListaVehiculosSeleccionados(tipo)
+      .then((response) => {
+        let data = response.data || {};
+        // Hacemos una copia profunda de data antes de asignarlo a respuesta_follow_f
+        respuesta_init_f = JSON.parse(JSON.stringify(data));
+        respuestaAux = JSON.parse(JSON.stringify(data));
+      })
+      .catch((error) => {
+        console.error(`Error: ${error}`);
+      });
+  }
 
   const getListaVehiculosEntrega = async () => {
     try {
-      const response = await axiosGetListaVehiculosSeleccionados(tipo);
-      const list = response.data;
-      setVehiculos(list);
+      await getVehiculos(tipo);
+      vehiculos = JSON.parse(JSON.stringify(respuesta_init_f));
+      console.log(vehiculos);
+      // setVehiculos(list);
     } catch (error) {
       console.error(`Error: ${error}`);
     }
   };
 
+  React.useEffect(() => {
+    getListaVehiculosEntrega();
+  });
+
   return (
     <Paper sx={{ width: "100%" }}>
-      <Box sx={{ paddingLeft: "15px" }}>
-        <h3 style={{ marginBottom: "3px" }}>Operaciones</h3>
-        <p style={{ opacity: 0.6, fontSize: "14px", marginTop: "2px" }}>
-          Información de los pedidos
-        </p>
+      <Box
+        sx={{ paddingLeft: "15px" }}
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "25px",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          <h3 style={{ marginBottom: "3px" }}>Operaciones</h3>
+          <p style={{ opacity: 0.6, fontSize: "14px", marginTop: "2px" }}>
+            Información de los pedidos
+          </p>
+        </div>
+        <div>
+          <TextField
+            label="Buscar por vehículo"
+            id="outlined-size-small"
+            defaultValue="Ingrese el vehiculo"
+            size="small"
+            value={tipo}
+            onChange={(event) => {
+              setTipo(event.target.value);
+            }}
+          />
+        </div>
       </Box>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">

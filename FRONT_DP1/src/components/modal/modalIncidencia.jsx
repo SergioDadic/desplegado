@@ -54,7 +54,7 @@ export default function ModalIncidencia() {
       matricula: valueVehiculo.toString(),
       tipo: valueTipo.toString(),
     };
-    console.log(estructura);
+    // console.log(estructura);
     try {
       const response = await axiosSetAveria(estructura);
       handleClose();
@@ -70,7 +70,7 @@ export default function ModalIncidencia() {
       const response = await axiosGetVehiculosDisponibles();
       const list = response.data;
       setListaVehiculos(list);
-      console.log(response.data);
+      // console.log(response.data)
     } catch (error) {
       console.error(`Error: ${error}`);
     }

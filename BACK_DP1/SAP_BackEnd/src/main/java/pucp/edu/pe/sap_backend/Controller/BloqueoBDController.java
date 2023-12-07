@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/v1/Bloqueo")
+@RequestMapping("/back")
 public class BloqueoBDController {
     @Autowired
     private final BloqueoBDService bloqueoBDService;
@@ -31,7 +31,7 @@ public class BloqueoBDController {
         this.bloqueoBDRepository = bloqueoBDRepository;
     }
 
-    @PostMapping("/guardar")
+    @PostMapping("/api/v1/Bloqueo/guardar")
     BloqueosBD guardarBloqueoBD(@RequestBody Map<String,Object>nuevoBloqueo){
         log.info("Agregando bloqueo...");
         var json = new JSONObject(nuevoBloqueo);
@@ -43,17 +43,17 @@ public class BloqueoBDController {
         bloqueo.setFinBloqueo(tiempoFinBloqueo);
         return bloqueoBDRepository.saveAndFlush(bloqueo);
     }
-    @GetMapping("/leer")
+    @GetMapping("/api/v1/Bloqueo/leer")
     public List<BloqueosBD> litarBloqueoBD(){
         return bloqueoBDService.listar();
     }
 
-    @PostMapping("/CargaMasivaBloqueos")
+    @PostMapping("/api/v1/Bloqueo/CargaMasivaBloqueos")
     public String cargaMasiva(@RequestParam("file") MultipartFile file){
         return bloqueoBDService.cargaMasivaParaBloqueos(file);
     }
 
-    @GetMapping("/listarBloqueosPorFechas")
+    @GetMapping("/api/v1/Bloqueo/listarBloqueosPorFechas")
     public List<BloqueosBD> listarBloqueosBDPorFecha(@RequestParam String fechaInicio, @RequestParam String fechaFin){
         LocalDateTime inicio = LocalDateTime.parse(fechaInicio,formatter);
         LocalDateTime fin = LocalDateTime.parse(fechaFin,formatter);
