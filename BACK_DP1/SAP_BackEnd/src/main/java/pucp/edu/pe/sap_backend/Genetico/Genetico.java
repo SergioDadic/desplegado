@@ -215,13 +215,8 @@ public class Genetico{
         else auxTurno = 2;
         LocalDate fecha = currentTime.toLocalDate();
         LocalTime tiempo = currentTime.toLocalTime();
-
         //AÑADO LAS AVERIAS QUE ESTARAN EN ESTE TURNO
-
-
-// ESTO ES AVERIAS
-
-
+        // ESTO ES AVERIAS
         for(Vehiculo car:this.cars) {
             //LIBERAR PEDIDOS ENTREGADOS
             car.setXInicial(car.getX());
@@ -423,6 +418,440 @@ public class Genetico{
         }
         //if(this.limit != 1)calcularAverias(this.cars.size(),auxTurno);
     }
+
+
+
+    public void executeAlgorithmDiario(int minutos) {
+        LocalDateTime startTime= this.currentTime;
+        int horaStart = startTime.getHour();
+        int auxTurno;
+        if (horaStart >= 16 && horaStart < 24) auxTurno = 3;
+        else if (horaStart >= 0 && horaStart < 8) auxTurno = 1;
+        else auxTurno = 2;
+        LocalDate fecha = currentTime.toLocalDate();
+        LocalTime tiempo = currentTime.toLocalTime();
+        //AÑADO LAS AVERIAS QUE ESTARAN EN ESTE TURNO
+        // ESTO ES AVERIAS
+        for(Vehiculo car:this.cars) {
+            //LIBERAR PEDIDOS ENTREGADOS
+            car.setXInicial(car.getX());
+            car.setYInicial(car.getY());
+            car.getMovement().clear();
+            car.getTotalOrders().addAll(car.getDeliveredOrder());
+            if (this.limit == 1) {
+                for (Pedido ped : car.getDeliveredOrder()) {
+                    ped.setEstado("Entregado");
+                }
+            }
+            car.getDeliveredOrder().clear();
+
+            //..............................
+            //VERIFICO LO DE LAS AVERIAS ACTIVAS DE ANTESSSSSSS
+            if (this.turnoAnt != auxTurno) {
+                car.setTurnoAveriado(car.getTurnoAveriado() - 1);
+                if (car.getTurnoAveriado() == 0) car.setEstado("Disponible");
+                if ("Reparado".equals(car.getEstado()) && currentTime.isAfter(car.getAveriaAsignada().getProx_fecha_disponible())) {
+                    car.setEstado("Disponible");
+                }
+                car.setPrimeraRuta(car.getRoute().size());
+            }
+            if ("Disponible".equals(car.getEstado())) car.setMovEstatico(-1);
+
+            if (car.getEstado() == "Por averiar") {
+
+                car.setEstado("Averiado");
+                car.setEstaAveriado(0);
+                // SE LE SACA LOS PEDIDOS QUE TIENE LOS COLOCA EN LA LISTA
+                //Y SE CREA UN PEDIDO DE PRIODIDAD PARA QUE PASE POR "AHI"
+                //COLOCAR TIEMPO DE RECUPERACION DE AVERIA
+                //if (car.getAveriaAsignada().getTurno_averia() == auxTurno) { //VERIFICO SI ME TENGO QUE AVERIAR AHI MISMO
+                //car.setEstado("Por averiar"); // SE LE COLOCA EL ESTADO DE AVERIADO
+                //se COLOCA LA LOGICA DEL TIEMPO A LA CUAL SE REINCORPORARA DEPENDIENDO DE SU TIPO DE AVERIA
+
+                if (car.getAveriaAsignada().getTipo_averia() == 1) { // TIPO DE AVERIA UNO
+                    car.getAveriaAsignada().setHoras_inmovilizado(2);
+                    car.getAveriaAsignada().setProx_fecha_disponible(currentTime.plusHours(2)); //LA FECHA EN LA CUAL VOLVERA A MOVERSE
+                    car.getAveriaAsignada().setFecha_inmovilizado(currentTime.plusHours(2));
+                    //SE CALCULA EL NUEVO TURNO DISPONIBLE
+
+                }
+                if (car.getAveriaAsignada().getTipo_averia() == 2) {
+                    car.getAveriaAsignada().setHoras_inmovilizado(2);
+                    car.getAveriaAsignada().setFecha_inmovilizado(currentTime.plusHours(2));
+                    if (auxTurno == 1) {
+                        car.getAveriaAsignada().setProx_turno_disponible(3);
+                        car.getAveriaAsignada().setProx_fecha_disponible(LocalDateTime.of(fecha, LocalTime.of(16, 0)));//COLOCAR LA FECHA EN LA CUAL
+                    } else if (auxTurno == 2) {
+                        car.getAveriaAsignada().setProx_turno_disponible(1);
+                        car.getAveriaAsignada().setProx_fecha_disponible(LocalDateTime.of(fecha.plusDays(1), LocalTime.of(0, 0)));
+
+                    } else if (auxTurno == 3) {
+                        car.getAveriaAsignada().setProx_turno_disponible(2);
+                        car.getAveriaAsignada().setProx_fecha_disponible(LocalDateTime.of(fecha.plusDays(1), LocalTime.of(8, 0)));
+                    }
+                }
+                if (car.getAveriaAsignada().getTipo_averia() == 3) {
+                    car.getAveriaAsignada().setHoras_inmovilizado(2);
+                    car.getAveriaAsignada().setFecha_inmovilizado(currentTime.plusHours(4));
+
+                    car.getAveriaAsignada().setProx_turno_disponible(1);
+                    car.getAveriaAsignada().setProx_fecha_disponible(LocalDateTime.of(fecha.plusDays(3), LocalTime.of(0, 0)));
+
+                }
+
+                //COLOCAR LOGICA DE TIEMPO
+                // }
+            }
+            if (car.getEstado().equals("Averiado")) {
+                if(!car.getOrder().isEmpty()){
+                    LinkedList<Pedido>pedidosAux = new LinkedList<>(car.getOrder());
+                    for(Pedido pedido:pedidosAux) {
+                        this.getOrders().add(pedido);
+                    }
+                    car.setStock(0);
+                    car.getOrder().clear();
+                }
+
+                // Lógica para calcular tiempo de inmovilización y programar próxima fecha disponible
+                //if(k==1)
+                car.getAveriaAsignada().getProx_fecha_disponible().plusDays(1);
+
+                if (car.getAveriaAsignada().getTurno_averia() == auxTurno) {
+                    if (currentTime.isBefore(car.getAveriaAsignada().getFecha_inmovilizado())) {}
+                    else {
+                        if(car.getAveriaAsignada().getTipo_averia() == 1){
+                            car.setEstado("Disponible");  // Cambiar estado a disponible después de la avería
+                            car.setMovEstatico(-1);
+                            car.generateRoute(currentTime,blocks,12,8);
+                            // k = 0
+                        }
+                        else if(car.getAveriaAsignada().getTipo_averia() == 2 || car.getAveriaAsignada().getTipo_averia() == 3){
+                            car.setEstado("Reparado");
+                            car.generateRoute(currentTime,blocks,12,8);
+                        }
+                    }
+                }
+            }
+            if(car.getEstado().equals("Reparado") && currentTime.isAfter(car.getAveriaAsignada().getProx_fecha_disponible())){
+                car.setEstado("Disponible");  // Cambiar estado a disponible después de la avería
+                car.setMovEstatico(-1);
+            }
+
+
+        }
+        // LE COLOCO EL ESTADO POR AVERIAR A LOS VEHICULOS QUE SE LES TENGA QUE AVERIAR Y QUE ESTEN EN EL TURNO CORRECTO
+        colocarEstadoDeAveriado(auxTurno);
+
+        // VER ENTREGA DE PEDIDOSSSSSSSSSSSSSSSSSSS
+        LinkedList<Pedido>pedidosEntregados = new LinkedList<>();
+        this.turnoAnt = auxTurno;
+        for(int i=0;i<limit; i++,currentTime = currentTime.plusMinutes(minutos)){
+            while(!totalOrders.isEmpty()){
+                //Each control will be every ten minutes
+                if(currentTime.isAfter(totalOrders.get(0).getPedidoDate())){
+                    orders.add(totalOrders.get(0));
+                    totalOrders.remove(0);
+                }else{
+                    break;
+                }
+            }
+            //Sort orders by limitTime
+            Collections.sort(orders);
+            //Control if some order cannot be delivered
+            if(continuidad ==0){
+                for(Pedido order: orders){
+                    if(order.getLimitDate().isBefore(currentTime)){
+                        System.out.println("El pedido numero "+order.getIdPedido()+" no puede ser entregado a tiempo: Tiempo maximo: "+ order.getLimitDate()+" Tiempo actual: "+ this.currentTime);
+                        this.limit = -1;
+                        return;
+                    }
+                }
+            }
+
+            //PLAN DE REPLANIFICACION
+            List<Pedido> auxPedidos = new ArrayList<>();
+            List<Pedido> auxPedidosEspera = new ArrayList<>(this.getOrders());
+            //auxPedidos= obtenerListaPedidosDeVehiculosDeGenetico();
+            //Algoritmo seleccionado
+            if(!orders.isEmpty()){
+
+                if(PuedeEntrarPedido(cars)){ // para que replanifique cuando no encuentre espacio y no en todo momento
+                    //REPLANIFICA CON LOS PEDIDOS QUE
+                    if(replanificarDiario(currentTime)){
+                        //BUSCAR PEDIDOS ENTREGADOS de la lista de pedidos de vehiculos
+                        for (Pedido ped: auxPedidos){
+                            if(ped.getEstado()=="Entregado"){
+                                ped.setAmount(ped.getAmount()-ped.getAssigned());
+                                ped.setAssigned(0);
+                            }
+                        }
+                        this.getOrders().clear();
+                        //this.getOrders().addAll(auxPedidos);
+                        this.getOrders().addAll(auxPedidosEspera);
+                        //BUSCAR PEDIDOS EN VEHICULOS EN PROCESO osea los otros que no están pendientes
+                        Collections.sort(orders);
+
+                    }
+                }
+
+                genetic_algorithmDiario(orders, this.cars, currentTime,blocks);
+
+
+            }
+            //Time actualization
+            updatePositionDiario(this.cars,currentTime,blocks,minutos);
+        }
+        //if(this.limit != 1)calcularAverias(this.cars.size(),auxTurno);
+    }
+
+
+
+
+    public void updatePositionDiario(ArrayList<Vehiculo> cars, LocalDateTime currentTime, BFS blocks,int minutos) {
+        int auxX,auxY,i,auxTipo,almacenX=0,almacenY=0;
+        int auxDist;
+        int almacenXC=0,almacenYC=0,almacenXN=0,almacenYN=0,almacenXE=0,almacenYE=0;
+        LinkedList<Cell> auxRoute;
+        LinkedList<Cell> auxRecorrido;
+        LinkedList<Pedido> auxOrder;
+        Pedido auxDO;
+        int calcularMovimientosSimulacion=0;
+        if( minutos ==1){
+            calcularMovimientosSimulacion=1;
+        }else if (minutos ==18){
+            calcularMovimientosSimulacion = 15;
+        }
+        //VER
+        for(Vehiculo car: cars){
+            auxTipo= car.getType()== 1? 2 : 1;
+            auxRoute = car.getRoute();
+            auxOrder = car.getOrder();
+
+            almacenX = 12;
+            almacenY = 8;
+
+
+            while(!auxOrder.isEmpty()){
+                auxX=auxOrder.get(0).getX();
+                auxY=auxOrder.get(0).getY();
+                if(car.getX()==auxX && car.getY()==auxY){
+                    auxOrder.get(0).setDeliverDate(currentTime);
+                    car.getTotalOrders().add(new Pedido (auxOrder.get(0)));
+                    car.setPhysicStock(car.getPhysicStock()-auxOrder.get(0).getAmount());
+                    auxOrder.remove(0);
+                }else{
+                    break;
+                }
+            }
+            i=0;
+            while(i<calcularMovimientosSimulacion){
+                //Before movement
+                if(car.getEstado() == "Averiado"){
+                    car.getMovement().add(new Cell(car.getX(),car.getY(),-1,null,currentTime));
+                    i++;
+                    car.setMovReaundar(car.getMovReaundar()-1);
+                    car.getRoute().clear();
+                    continue;
+
+                }
+                if(car.getEstado() == "Reparado" && car.getX() == 12 && car.getY() == 8){
+                    car.getMovement().add(new Cell(car.getX(),car.getY(),-1,null,currentTime));
+                    i++;
+                    car.getRoute().clear();
+                    continue;
+                }
+                if(auxRoute.isEmpty()) {
+                    auxDist = car.getMovement().isEmpty()? 0:car.getMovement().getLast().dist;
+                    car.getMovement().add(new Cell(car.getX(),car.getY(),auxDist,null,currentTime));
+                    i++;
+                    continue;
+                }
+                //Check averia
+                //Car moving
+                car.setX(auxRoute.getFirst().x);
+                car.setY(auxRoute.getFirst().y);
+                if(car.getMovEstatico() == -1) car.setMovEstatico(car.getMovement().size());
+                auxRoute.remove();
+                i++;
+                car.getMovement().add(new Cell(car.getX(),car.getY(),car.getMovement().size()==0? 0: car.getMovement().getLast().dist,null,currentTime));
+                while(!auxOrder.isEmpty()){
+                    auxX=auxOrder.get(0).getX();
+                    auxY=auxOrder.get(0).getY();
+                    if(car.getX()==auxX && car.getY()==auxY){
+                        auxOrder.get(0).setDeliverDate(currentTime);
+                        car.setPhysicStock(car.getPhysicStock()-auxOrder.get(0).getAmount());
+                        auxDO = auxOrder.remove(0);
+                        auxDO.setAssigned(0);
+                        car.getDeliveredOrder().add(auxDO);
+                        car.getMovement().getLast().dist +=1;
+                    }else{
+                        break;
+                    }
+                }
+                if(car.getX()==almacenX && car.getY()==almacenY){
+                    car.setStock(car.getCapacity());
+                    car.setPhysicStock(car.getCapacity());
+                }
+            }
+        }
+    }
+
+
+    public boolean replanificarDiario(LocalDateTime tiempo){
+        //Tiempo de demora
+        long start = System.nanoTime();
+
+        int startX,startY;
+        if(this.orders.isEmpty()) return false;
+        //NO DEBE DE existir pedidos que tengan 4h de tiempo limite estos deben ser entregados primero owo
+        if(ChronoUnit.HOURS.between(tiempo,this.orders.getFirst().getLimitDate()) > 4) return false;
+        Collections.sort(this.orders);
+
+        for(Vehiculo auxCars : this.cars){
+//            for(Pedido auxPed : auxCars.getOrder()) {
+//                auxPed.setAssigned(0);
+//            }
+//            this.orders.addAll(auxCars.getOrder());
+            if(auxCars.getEstado().equals("Disponible")){
+                auxCars.getOrder().clear();
+                auxCars.setStock(auxCars.getPhysicStock());
+            }
+        }
+        for(Almacen almacen : this.almacenes){
+            almacen.setCantidadLiquidoGenerarRutas(almacen.getCantidadLiquidoReplanificar());
+        }
+        //Impresion de tiempo de demora
+        long elapsedTime = System.nanoTime() - start;
+        System.out.println("Tiempo de ejecucion de replanificacion: "+tiempo);
+        return true;
+    }
+
+
+    private void genetic_algorithmDiario(LinkedList<Pedido> listaDePedidos, ArrayList<Vehiculo> cars,LocalDateTime currentTime, BFS blocks) {
+
+        //Modificacion de la poblacion, inicial de 60
+        int populationSize = 45;
+        double mutationRate = 0.05;
+        double crossoverRate = 0.8;
+        //Current Number of Generations
+        int numberOfGenerations = 0;
+        //Stop Condition
+        int stopAt = 0;
+        //Population
+        Population pop;
+        //Number of cars
+        for (int k = 0; !orders.isEmpty(); k++) {
+            //if there is no posible combination for an order
+            if (k >= orders.size()) break;
+            if(this.limit < 0) {
+                for (Vehiculo car : cars) {
+                    if(car.getEstado()=="Averiado" || car.getEstado() == "Reparado") continue; // NO TOMARA EN CUENTA A LOS VEHICULOS AVERIADOS :)
+                    List<Double> warehouseDistances = new ArrayList<>();
+
+                    for (Almacen warehouse : almacenes) {
+                        double distanceToWarehouse = calculateDistance(car.getX(), car.getY(), warehouse.getPos_x(), warehouse.getPos_y());
+                        warehouseDistances.add(distanceToWarehouse);
+                    }
+                    int closestWarehouseIndex = findClosestWarehouse(warehouseDistances);
+                    Almacen closestWarehouse = almacenes.get(closestWarehouseIndex);
+
+
+                    if (this.duracion == 7 && car.getOrder().size() == 3) continue;
+                    if (car.getStock() <= 0) continue;
+
+
+                    int numOrdersAux = car.getOrder().size() + 2;
+                    Path route = new Path(numOrdersAux, car, orders.get(k), currentTime, blocks, closestWarehouse.getPos_x(), closestWarehouse.getPos_y());
+                    pop = new Population(populationSize, numOrdersAux, route, crossoverRate, mutationRate, blocks, closestWarehouse.getPos_x(), closestWarehouse.getPos_y());
+                    //Sorting the population from Fitness / Evaluating
+                    pop.FitnessOrder();
+
+                    //Start looking for possible solution
+                    while (numberOfGenerations != stopAt) {
+
+                        //Seleccion / Cruce
+                        while (pop.Mate(closestWarehouse.getPos_x(), closestWarehouse.getPos_y()) == false) ;
+                        //Mutacion
+                        for (int i = 0; i < pop.getPopulation().length; i++) {
+                            pop.getNextGen()[i].setPath(pop.Mutation(pop.getNextGen()[i].getPath()), closestWarehouse.getPos_x(), closestWarehouse.getPos_y());
+                        }
+                        pop.setPopulation(pop.getNextGen());
+                        pop.setDone(0);
+                        pop.FitnessOrder();
+                        numberOfGenerations++;
+                    }
+
+                    int aux = pop.getPopulation().length - 1;
+                    LinkedList<Cell> auxCells;
+                    double valor = pop.getPopulation()[aux].getCost();
+                    if (valor < 100000.0) {
+                        double valro2 = orders.get(k).getAmount() - car.getStock(); // SE PUEDE DAR EL PEDIDO
+                        if (valro2 > 0) {
+                            int auxAmount = (int) orders.get(k).getAmount();
+                            orders.get(k).setAmount(car.getStock());
+                            car.addOrder(orders.get(k));
+                            //car.newOrder(pop.getPopulation()[aux].getPath(), car.getStock(), orders.get(k).getIdPedido());
+                            orders.get(k).setAmount(auxAmount - car.getStock());
+                            car.setStock(0);
+                            car.generateRoute(currentTime, blocks, closestWarehouse.getPos_x(), closestWarehouse.getPos_y());
+                            if (car.getPrimeraRuta() == 0) car.setPrimeraRuta(car.getRoute().size());
+                        } else {
+                            car.setStock(car.getStock() - orders.get(k).getAmount());
+                            car.addOrder(orders.get(k));
+                            //car.newOrder(pop.getPopulation()[aux].getPath(), orders.get(k).getAmount(), orders.get(k).getIdPedido());
+                            orders.remove(k);
+                            car.generateRoute(currentTime, blocks, closestWarehouse.getPos_x(), closestWarehouse.getPos_y());
+                            if (car.getPrimeraRuta() == 0) car.setPrimeraRuta(car.getRoute().size());
+                            k--;
+                            break;
+                        }
+                    }
+                }
+            }
+            for (Vehiculo car : cars) {
+
+                List<Double> warehouseDistances = new ArrayList<>();
+                double distanceToWarehouse = calculateDistance(car.getX(),
+                        car.getY(), this.almacenes.get(0).getPos_x(), this.almacenes.get(0).getPos_x());
+                warehouseDistances.add(distanceToWarehouse);
+
+                int closestWarehouseIndex = findClosestWarehouse(warehouseDistances);
+
+                Almacen closestWarehouse = almacenes.get(closestWarehouseIndex);
+
+                almacenes.get(closestWarehouseIndex).setCantidadLiquidoGenerarRutas(closestWarehouse.getCantidadLiquidoGenerarRutas() -
+                        (double)orders.get(k).getAmount());
+
+                if (this.duracion == 7 && car.getOrder().size() == 3) continue;
+                if (car.getStock() <= 0) continue;
+                double valro2 = orders.get(k).getAmount() - car.getStock(); // SE PUEDE DAR EL PEDIDO
+                if (valro2 > 0) {
+                    int auxAmount = (int) orders.get(k).getAmount();
+                    orders.get(k).setAmount(car.getStock());
+                    car.addOrder(orders.get(k));
+                    //car.newOrder(pop.getPopulation()[aux].getPath(), car.getStock(), orders.get(k).getIdPedido());
+                    orders.get(k).setAmount(auxAmount - car.getStock());
+                    car.setStock(0);
+                    car.generateRoute(currentTime, blocks, closestWarehouse.getPos_x(), closestWarehouse.getPos_y());
+                    if (car.getPrimeraRuta() == 0) car.setPrimeraRuta(car.getRoute().size());
+                } else {
+                    car.setStock(car.getStock() - orders.get(k).getAmount());
+                    car.addOrder(orders.get(k));
+                    //car.newOrder(pop.getPopulation()[aux].getPath(), orders.get(k).getAmount(), orders.get(k).getIdPedido());
+                    orders.remove(k);
+                    car.generateRoute(currentTime, blocks, closestWarehouse.getPos_x(), closestWarehouse.getPos_y());
+                    if (car.getPrimeraRuta() == 0) car.setPrimeraRuta(car.getRoute().size());
+                    k--;
+                    break;
+                }
+            }
+
+
+        }
+    }
+
+
+
 
 
     public void colocarEstadoDeAveriado(int turnoActual){
@@ -804,7 +1233,7 @@ public class Genetico{
 
     private void genetic_algorithm(LinkedList<Pedido> listaDePedidos, ArrayList<Vehiculo> cars,LocalDateTime currentTime, BFS blocks) {
 
-//Modificacion de la poblacion, inicial de 60
+    //Modificacion de la poblacion, inicial de 60
         int populationSize = 45;
         double mutationRate = 0.05;
         double crossoverRate = 0.8;
@@ -893,13 +1322,13 @@ public class Genetico{
 
                 distanceToWarehouse = calculateDistance(car.getX(),
                         car.getY(), this.almacenes.get(1).getPos_x(), this.almacenes.get(1).getPos_x());
-                if(orders.get(k).getCantidadAEntregar() <= this.almacenes.get(1).getCantidadLiquidoGenerarRutas()){
+                if((double)orders.get(k).getAmount() <= this.almacenes.get(1).getCantidadLiquidoGenerarRutas()){
                     warehouseDistances.add(distanceToWarehouse);
                 }
 
                 distanceToWarehouse = calculateDistance(car.getX(),
                         car.getY(), this.almacenes.get(2).getPos_x(), this.almacenes.get(2).getPos_x());
-                if(orders.get(k).getCantidadAEntregar() <= this.almacenes.get(2).getCantidadLiquidoGenerarRutas()){
+                if((double)orders.get(k).getAmount() <= this.almacenes.get(2).getCantidadLiquidoGenerarRutas()){
                     warehouseDistances.add(distanceToWarehouse);
                 }
 

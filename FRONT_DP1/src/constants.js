@@ -1,1 +1,1 @@
-export const REACT_APP_API_URL=`http://localhost:8080/`
+export const REACT_APP_API_URL='http://200.16.7.172/back'

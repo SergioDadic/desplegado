@@ -54,6 +54,7 @@ function TiempoActual({ simulacionEnCurso, fechaSeleccionada}) {
         id="outlined-read-only-input"
         label="Fecha Simulación"
         value={tiempoInicial.toLocaleDateString()}
+        size="small"
         InputProps={{
           readOnly: true,
         }}
@@ -63,6 +64,7 @@ function TiempoActual({ simulacionEnCurso, fechaSeleccionada}) {
         label="Hora Simulación"
         // value={tiempoActual.toLocaleTimeString()}
         value={tiempoInicial.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        size="small"
         InputProps={{
           readOnly: true,
         }}

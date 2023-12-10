@@ -70,6 +70,7 @@ public class GeneticoController {
     private static boolean inicializado = false;
     private LocalDateTime midnightAux;
 
+    private static List<Vehiculo> vehiculosReporte = new ArrayList<>();
     @Autowired
     public GeneticoController(ReporteSimulacionPDFService reporteSimulacionPDFService){
         this.reporteSimulacionPDFService = reporteSimulacionPDFService;
@@ -296,6 +297,10 @@ public class GeneticoController {
                     almacen.setCantidadLiquidoGenerarRutas(160.0);
                     almacen.setCantidadLiquidoReplanificar(160.0);
                 }
+                genetico.getAlmacenes().get(0).setCantMaximaLiquidoGLP(0.0);
+                genetico.getAlmacenes().get(0).setCantidadLiquidoGenerarRutas(0.0);
+                genetico.getAlmacenes().get(0).setCantidadLiquidoReplanificar(0.0);
+
                 inicializado = false;
             }
         }
@@ -326,6 +331,12 @@ public class GeneticoController {
                 listaBloqueos.add(bloqueo);
             }
         }
+        if(this.genetico.getTotalOrders().size() < 51){
+            for(Vehiculo vehiculo: auxVehiculos){
+                vehiculosReporte.add(vehiculo);
+            }
+
+        }
        // listaVehiculos = auxVehiculos;
        // listaBloqueosFiltrado = listaBloqueos;
         listaDeClases.put("Vehiculos",auxVehiculos);
@@ -333,6 +344,61 @@ public class GeneticoController {
         listaDeClases.put("Almacenes",this.genetico.getAlmacenes());
         return listaDeClases;
     }
+
+
+
+
+    @GetMapping("/api/v1/simulacion/listarVehiculosFiltradoDiario")
+    public Map<String,List<?>> obtenerCaminoDeVehiculoFiltradoDiario(@RequestParam Integer limit,@RequestParam int minutos,@RequestParam int continuidad){
+        Map<String,List<?>> listaDeClases = new HashMap<>();
+        List<Vehiculo>listaVehiculos = new ArrayList<>();
+        List<BloqueosBD>listaBloqueosFiltrado = new ArrayList<>();
+
+        this.genetico.setLimit(limit);
+        this.genetico.setContinuidad(continuidad);
+        LocalDateTime inicioBloqueo = genetico.getCurrentTime();
+        ArrayList<Vehiculo> auxVehiculos = new ArrayList<>();
+        genetico.executeAlgorithmDiario(minutos);
+
+        LocalDateTime finBloqueo = genetico.getCurrentTime();
+
+        if(genetico.getLimit() == -1){
+            return null;
+        }
+        System.out.println("Ejecucion hasta: "+ genetico.getCurrentTime() + " Pedidos restantes: " + genetico.getTotalOrders().size());
+        auxVehiculos = genetico.getCars();
+
+        List<BloqueosBD> listaBloqueos = new ArrayList<>();
+        for(BloqueosBD bloqueo :bloqueosBDMap.values()){
+
+            if (inicioBloqueo.isAfter(bloqueo.getInicioBloqueo()) && inicioBloqueo.isBefore(bloqueo.getFinBloqueo())) {
+                listaBloqueos.add(bloqueo);
+            } else if (finBloqueo.isAfter(bloqueo.getInicioBloqueo()) && finBloqueo.isBefore(bloqueo.getFinBloqueo())) {
+                listaBloqueos.add(bloqueo);
+            } else if (inicioBloqueo.isBefore(bloqueo.getInicioBloqueo()) && finBloqueo.plusMinutes(minutos).isAfter(bloqueo.getInicioBloqueo())){
+                listaBloqueos.add(bloqueo);
+            } else if (inicioBloqueo.plusMinutes(minutos).isBefore(bloqueo.getFinBloqueo()) && finBloqueo.isAfter(bloqueo.getFinBloqueo())){
+                listaBloqueos.add(bloqueo);
+            }
+        }
+        if(this.genetico.getTotalOrders().size() < 51){
+            for(Vehiculo vehiculo: auxVehiculos){
+                vehiculosReporte.add(vehiculo);
+            }
+
+        }
+        // listaVehiculos = auxVehiculos;
+        // listaBloqueosFiltrado = listaBloqueos;
+        listaDeClases.put("Vehiculos",auxVehiculos);
+        listaDeClases.put("Bloqueos",listaBloqueos);
+        listaDeClases.put("Almacenes",this.genetico.getAlmacenes());
+        return listaDeClases;
+    }
+
+
+
+
+
 
     @GetMapping("/api/v1/simulacion/listarVehiculosSeleccionados")
     public ArrayList<Vehiculo> mostrarInformacionVehiculo(@RequestParam String tipo){
@@ -416,16 +482,12 @@ public class GeneticoController {
     }
     @GetMapping(value = "/api/v1/simulacion/generar",produces =  MediaType.APPLICATION_PDF_VALUE)
     public ModelAndView generarPDF(){
-        List<Vehiculo> vehiculos = this.genetico.getCars();
+        List<Vehiculo> vehiculos = vehiculosReporte;
         Map<String, Object> model = new HashMap<>();
         model.put("Vehiculos", vehiculos);
         model.put("Fecha",genetico.getCurrentTime());
         return new ModelAndView(reporteSimulacionPDFService,model);
     }
-
-
-
-
 
 
 //    @GetMapping("/listarGeneticStates")

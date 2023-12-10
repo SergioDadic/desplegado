@@ -7,6 +7,8 @@ import BotonVerde from "../components/botonVerde/botonVerde";
 import ContenedorTabla from "../components/contenedorTabla/contenedorTabla";
 import { useEffect, useState } from "react";
 import { axiosGetPedido } from "../api/AxiosPedido";
+import ModalRegistroPedido from "../components/modal/modalRegistroPedido";
+import ModalRegistroPedidos from "../components/modal/modalRegistroVariosPedidos";
 
 const estilosContenedor = {
   backgroundColor: colores.blanco,
@@ -46,7 +48,9 @@ function Pedidos() {
         <BarraSuperior />
         <Box component="main" sx={{ flexGrow: 1, p: 3, paddingTop: 8 }}>
           <h2 className="tituloPagina">PEDIDOS</h2>
-          <BotonVerde texto={"Ingresar pedido"} camino={"NuevoPedido"} />
+          <div style={{display:"flex", flexDirection:"row", gap:"20px", justifyContent:"right", alignItems:"center", marginTop:"-10px", marginBottom:"10px"}}><ModalRegistroPedido />
+          <ModalRegistroPedidos/></div>
+          {/* <BotonVerde texto={"Ingresar pedido"} camino={"NuevoPedido"} /> */}
           <Container sx={estilosContenedor}>
             <InputWithIcon texto={"Ingresar ID del pedido:"} />
           </Container>

@@ -51,7 +51,7 @@ function Bloqueos() {
         <BarraSuperior />
         <Box component="main" sx={{ flexGrow: 1, p: 3, paddingTop: 8 }}>
           <h2 className="tituloPagina">BLOQUEOS</h2>
-          <BotonVerde texto={"Ingresar bloqueo"} camino={"NuevoBloqueo"} />
+          {/* <BotonVerde texto={"Ingresar bloqueo"} camino={"NuevoBloqueo"} /> */}
           <Container sx={estilosContenedorBloqueo}>
             <div
               style={{

@@ -51,7 +51,7 @@ function CargaArchivos() {
   const [filesNames, setFilesNames] = useState([]);
 
   const handleClick = () => {
-    navigate("/Simulacion");
+    navigate("/Seguimiento");
   };
 
   // FUNCIONES PARA SUBIDA DE PEDIDOS
@@ -90,8 +90,6 @@ function CargaArchivos() {
     setArchivosBloqueos([]);
     inputFileRefBloqueos.current.value = null;
   }
-
-
 
   /* FUNCIONES PARA SUBIDA DE AVERIAS*/
   const handleAverias = (event) => {
@@ -132,7 +130,7 @@ function CargaArchivos() {
   
       try {
         setLoadingFiles(true);
-        const response = await axiosCliente().post("back/api/v1/SubidaDeArchivos/subidaDeArchivos",formData,
+        const response = await axiosCliente().post("/api/v1/SubidaDeArchivos/subidaDeArchivos",formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -167,10 +165,10 @@ function CargaArchivos() {
       contador++;
     }
 
-    if (archivosPedidos.length === 0) {
-      setErrorPedidos("Debes subir al menos un archivo de pedidos");
-      contador++;
-    }
+    // if (archivosPedidos.length === 0) {
+    //   setErrorPedidos("Debes subir al menos un archivo de pedidos");
+    //   contador++;
+    // }
     
     if(contador!==0) valido = false;
 

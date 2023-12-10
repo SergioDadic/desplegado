@@ -3,15 +3,11 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import CarCrashIcon from "@mui/icons-material/CarCrash";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import { axiosSetAveria } from "../../api/AxiosAveria";
-import { axiosGetVehiculosDisponibles } from "../../api/AxiosSimulacion";
-import GasMeterIcon from "@mui/icons-material/GasMeter";
-import { Grid } from "@mui/material";
+import axiosClient from "../../api/AxiosClient";
 import { useState } from "react";
-import { axiosSetPedido } from "../../api/AxiosPedido";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { axiosCliente } from "../../services/axiosCliente";
 
 const style = {
   position: "absolute",
@@ -28,7 +24,7 @@ const style = {
   gap: 2,
 };
 
-export default function ModalPedido() {
+export default function ModalVariosPedidos() {
   //Variables para el modal
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -48,36 +44,73 @@ export default function ModalPedido() {
     let mes = (fechaRec.getMonth() + 1).toString().padStart(2, "0");
     let anio = fechaRec.getFullYear();
     let hora = fechaRec.getHours().toString().padStart(2, "0");
-    let minuto = (fechaRec.getMinutes()+2).toString().padStart(2, "0");
+    let minuto = fechaRec.getMinutes().toString().padStart(2, "0");
     let segundo = "00";
-    return `${anio}-${mes}-${dia}T${hora}:${minuto}`;
+    return `${anio}-${mes}-${dia}T${hora}:${minuto}:${segundo}`;
   }
 
   /*AXIOS*/
+  //Subida de archivos
+  const [file, setFile] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
 
-  //Guardar incidencia
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const fechaRec = new Date();
-    const fechaLim = new Date();
-    fechaLim.setHours(fechaRec.getHours() + parseInt(tiempoLim));
-
-    const estructura = {
-      nombre_pedido: idCliente,
-      cantidad_pedido: parseInt(cantidad),
-      fecha_recibida: formatDate(fechaRec),
-      fecha_maxima_entrega: formatDate(fechaLim),
-      pos_x: parseInt(posX),
-      pos_y: parseInt(posY),
-    };
-    console.log(estructura);
-    // console.log(fechaLim);
+  const handleSubmit = async () => {
+    if (!file) {
+      console.error("Seleccione un archivo antes de cargar");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file);
     try {
-      const response = await axiosSetPedido(estructura);
+      setLoading(true);
+      setOpenModal(true);
+
+      const response = await axiosCliente().post("/api/v1/simulacion/diaria/pedidoTiempoReal",formData,
+          {
+              headers: {
+                  "Content-Type": "multipart/form-data",
+              },
+          }
+      );
+      if(response){
+          console.log("Se han cargado los archivos");
+          const data = response.data;
+      }
+      // setLoading(true);
+      // setOpenModal(true);
+      // const response = await axiosClient.post(
+      //   "back/api/v1/simulacion/diaria/pedidoTiempoReal",
+      //   formData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //     onUploadProgress: (progressEvent) => {
+      //       const percentCompleted = Math.round(
+      //         (progressEvent.loaded * 100) / progressEvent.total
+      //       );
+      //       setProgress(percentCompleted);
+      //     },
+      //   },
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   }
+      // );
+      const data = response.data;
+      console.log(data);
       handleClose();
-      console.log("Se ha insertado el pedido");
     } catch (error) {
-      console.error("Error al hacer la solicitud:", error);
+      console.error("Error al cargar pedidos: ", error);
+    } finally {
+      setLoading(false);
+      setOpenModal(false);
     }
   };
 
@@ -85,12 +118,12 @@ export default function ModalPedido() {
     <div>
       <Button
         variant="contained"
-        color="success"
-        endIcon={<GasMeterIcon />}
+        // color="success"
+        endIcon={<CloudUploadIcon />}
         style={{ width: "100%" }}
         onClick={handleOpen}
       >
-        Registrar Pedido
+        Cargar Pedidos
       </Button>
       <Modal
         open={open}
@@ -105,52 +138,16 @@ export default function ModalPedido() {
               fontSize={"20px"}
               style={{ color: "#2E7D32" }}
             >
-              Registro de pedido
+              Registro de pedidos
             </Typography>
             <div
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <TextField
-                required
-                id="outlined-required"
-                type="text"
-                label="Cliente (c-1)"
-                onChange={(e) => setIdCliente(e.target.value)}
+                type="file"
+                accept=".txt"
+                onChange={handleFileChange}
               />
-              <TextField
-                required
-                id="outlined-required"
-                type="number"
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*[.,]?[0-9]*",
-                }}
-                label="Cantidad (m3)"
-                onChange={(e) => setCantidad(e.target.value)}
-              />
-              <TextField
-                required
-                id="outlined-required"
-                type="number"
-                label="Tiempo Limite de Entrega (hr)"
-                onChange={(e) => setTiempoLim(e.target.value)}
-              />
-              <div className="distribucionRegistro">
-                <TextField
-                  required
-                  id="outlined-required"
-                  type="number"
-                  label="Posición X"
-                  onChange={(e) => setPosX(e.target.value)}
-                />
-                <TextField
-                  required
-                  id="outlined-required"
-                  type="number"
-                  label="Posición Y"
-                  onChange={(e) => setPosY(e.target.value)}
-                />
-              </div>
             </div>
             <div
               style={{

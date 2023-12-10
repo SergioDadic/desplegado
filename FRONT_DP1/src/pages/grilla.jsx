@@ -73,6 +73,7 @@ let posAlmacenS2 = [63, 3]; //Intermedio este
 let capAlmacenS2 = 0.0;
 let pedEntregado = 0;
 let pedxEntregar = 0;
+let vehiculos_disponible = [];
 
 function GrillaSimulacion() {
   const location = useLocation();
@@ -104,10 +105,13 @@ function GrillaSimulacion() {
   const [condicion, setCondicion] = useState(false);
   let mensajeSnackbar = "";
   useEffect(() => {
+    console.log("entra")
     if (condicion) {
-      setMostrarModal(true);
+      setMostrarModal(true);    
+      setCondicion(false);
     }
   }, [condicion]);
+
 
   //Variable para el manejo de fin de simulación
   const [endSimulation, setEndSimulation] = useState(false);
@@ -190,7 +194,6 @@ function GrillaSimulacion() {
       let puntos_llegada = [];
       let rutas = [];
       let bloqueos_ = [];
-      let vehiculos_disponible = [];
 
       v_tiempo = tiempo_actual_unix;
       if (v_tiempo >= parada) {
@@ -211,8 +214,7 @@ function GrillaSimulacion() {
             cont++;
           else break;
         }
-        if (cont == tam) {
-          setMostrarModal(true);
+        if (cont === tam) {
           setCondicion(true);
           mensajeSnackbar = "Simulación Semanal concluida con éxito";
           console.log("Simulacion Semanal concluida con exito");
@@ -573,7 +575,6 @@ function GrillaSimulacion() {
     while (contador_llamadas < numero_maximo_llamadas) {
       respuesta_follow_f = null;
       if (bandera_final) {
-        setCondicion(true);
         break;
       }
 
@@ -745,14 +746,14 @@ function GrillaSimulacion() {
   //Tabla Vehículo
   const column_tv = [
     { field: "id", headerName: "ID", width: 25 },
-    {
-      field: "placa",
-      headerName: "Placa",
-      description: "Puede ingresar la placa que desee buscar",
-      sortable: false,
-      width: 125,
-      valueGetter: (params) => `${params.row.placa || ""}`,
-    },
+    // {
+    //   field: "placa",
+    //   headerName: "Placa",
+    //   description: "Puede ingresar la placa que desee buscar",
+    //   sortable: false,
+    //   width: 125,
+    //   valueGetter: (params) => `${params.row.placa || ""}`,
+    // },
     {
       field: "vehiculo",
       headerName: "Vehículo",
@@ -767,7 +768,7 @@ function GrillaSimulacion() {
   const row_tv = estructuraTablaVeh
     ? estructuraTablaVeh.map((item) => ({
         id: item.id,
-        placa: item.placa,
+       // placa: item.placa,
         vehiculo: item.vehiculo,
         pedido: item.pedido,
         entrega: `(${item.posx},${item.posy})`,
@@ -1135,7 +1136,7 @@ function GrillaSimulacion() {
                         width: "100%",
                       }}
                     >
-                      {/* <ModalIncidencia /> */}
+                      {/* <ModalIncidencia vehiculos_disponible={vehiculos_disponible} /> */}
                       <div style={{ height: 400, width: "100%" }}>
                         <DataGrid
                           rows={row_in}
@@ -1158,19 +1159,19 @@ function GrillaSimulacion() {
               </Box>
             </div>
           </div>
-          {/* {mostrarModal && (
+          {mostrarModal && (
           <div
             style={{
-              position: "flex",
+              position: "absolute",
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
               zIndex: 9999,
             }}
           >
-            <MensajeExito/>
+            <MensajeExito open={mostrarModal} onClose={() => setMostrarModal(false)} />
           </div>
-        )} */}
+        )}
          
         </Box>
       </Box>

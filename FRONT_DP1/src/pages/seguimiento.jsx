@@ -306,7 +306,7 @@ function Seguimiento() {
                   paddingLeft={"50%"}
                 >
                   <h4 className="tituloPagina">OPERACIONES DIARIAS</h4>
-                  <SoliAveriaOp fechaTP={fechaTP} dateAux={dateAux} />
+                  <SoliAveriaOp fechaTP={fechaTP} dateAux={dateAux} scale={scale}/>
                 </Box>
               </Grid>
               <Grid

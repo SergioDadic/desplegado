@@ -55,7 +55,8 @@ public class Pedido implements Comparable{
 
     public Pedido() {
     }
-    public Pedido(int idPedido, int id, int x, int y, int cantidad, int YYYY, int MMDD, int hhmm, int maxHours, String nombrePedido){
+    public Pedido(int idPedido, int id, int x, int y, int cantidad,
+                  int YYYY, int MMDD, int hhmm, int maxHours, String nombrePedido){
         this.x=x;
         this.y=y;
         this.nombrePedido = nombrePedido;

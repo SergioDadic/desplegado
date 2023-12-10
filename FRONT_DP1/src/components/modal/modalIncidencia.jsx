@@ -27,7 +27,7 @@ const style = {
 const tipoIncidencia = ["TI1", "TI2", "TI3"];
 const turnoIncidencia = ["T1", "T2", "T3"];
 
-export default function ModalIncidencia() {
+export default function ModalIncidencia({vehiculos_disponible}) {
   //Variables para el modal
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -117,7 +117,7 @@ export default function ModalIncidencia() {
                 setInputValueVehiculo(newInputValue);
               }}
               id="controllable-states-demo"
-              options={listaVehiculos}
+              options={vehiculos_disponible}
               sx={{ width: 300 }}
               renderInput={(params) => (
                 <TextField {...params} label="Vehículo" />

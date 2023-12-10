@@ -50,22 +50,65 @@ const CartesianCoordinateSystem = ({width, height,scale,estructura}) => {
         const gridSquareXsize= scale;
         const gridSquareYsize= scale;
     
-        canvas.width = width*scale;
-        canvas.height = height*scale;
+        canvas.width = (width+2)*scale  +1;
+        canvas.height = (height+2)*scale +1;
         ctx.strokeStyle = colores.plomo;
         
-        for (let x = 0; x <= canvas.width; x += gridSquareXsize) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, canvas.height);
-            ctx.stroke();
-        }
-    
+       // Dibuja las líneas verticales
+        // for (let x = 0; x <= canvas.width; x += gridSquareXsize) {
+        //     ctx.beginPath();
+        //     ctx.moveTo(x, 0);
+        //     ctx.lineTo(x, canvas.height);
+        //     ctx.stroke();
+        // }
+
+        // // Dibuja las líneas horizontales
+        // for (let y = 0; y <= canvas.height; y += gridSquareYsize) {
+        //     ctx.beginPath();
+        //     ctx.moveTo(0, y);
+        //     ctx.lineTo(canvas.width, y);
+        //     ctx.stroke();
+        // }
+
+        // Almacenar el valor original de globalAlpha
+        const originalGlobalAlpha = ctx.globalAlpha;
+
+        // Configurar la transparencia global para las líneas horizontales
         for (let y = 0; y <= canvas.height; y += gridSquareYsize) {
             ctx.beginPath();
-            ctx.moveTo(0, y);
+            ctx.moveTo(12, y);
+
+            if (y === 0) {
+                // Hacer la primera línea transparente
+                ctx.globalAlpha = 0;
+            }
+
             ctx.lineTo(canvas.width, y);
             ctx.stroke();
+
+            if (y === 0) {
+                // Restaurar la transparencia después de la primera línea
+                ctx.globalAlpha = originalGlobalAlpha;
+            }
+        }
+
+        // Configurar la transparencia global para las líneas verticales
+        for (let x = 0; x <= canvas.width; x += gridSquareXsize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 12);
+
+            if (x === 0) {
+                // Hacer la primera línea vertical transparente
+                ctx.globalAlpha = 0;
+            }
+
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+
+            if (x === 0) {
+                // Restaurar la transparencia después de la primera línea
+                ctx.globalAlpha = originalGlobalAlpha;
+            }
         }
 
         
@@ -73,18 +116,18 @@ const CartesianCoordinateSystem = ({width, height,scale,estructura}) => {
         if (estructura && estructura.lineaDeRutas) {
             estructura.lineaDeRutas.forEach((segment) => {
                 if(segment[2] === "Disponible")
-                    plotLine(segment[0][0], segment[0][1], segment[1][0], segment[1][1], "#00cc88", 1.2);
+                    plotLine(segment[0][0] + 1 , segment[0][1], segment[1][0] + 1, segment[1][1], "#00cc88", 1.2);
                 else if(segment[2] === "Por averiar")
-                    plotLine(segment[0][0], segment[0][1], segment[1][0], segment[1][1], "#F47E51", 1.3);
+                    plotLine(segment[0][0] + 1, segment[0][1], segment[1][0] + 1, segment[1][1], "#F47E51", 1.3);
                 else if(segment[2] === "Reparado")
-                    plotLine(segment[0][0], segment[0][1], segment[1][0], segment[1][1], "#FF5959", 1.2);
+                    plotLine(segment[0][0] + 1, segment[0][1], segment[1][0] + 1, segment[1][1], "#FF5959", 1.2);
             });
         }
         
          // //Se dibujan los bloqueos
          if (estructura && estructura.bloqueos) {
             estructura.bloqueos.forEach((point) => {
-                const position = plotImage(point[0], point[1], image4, 0.8);
+                const position = plotImage(point[0] + 1, point[1], image4, 0.8);
                 //console.log("Coord" + point)
                 position.type = 'locks';
                 tempImagePositions.push(position); 
@@ -95,7 +138,7 @@ const CartesianCoordinateSystem = ({width, height,scale,estructura}) => {
          if (estructura && estructura.coordenadasVehiculos) {
             estructura.coordenadasVehiculos.forEach((coord) => {
                 
-                const position = plotImage(coord[0], coord[1], image5, 1.2,coord[2],coord[3]);
+                const position = plotImage(coord[0] + 1 , coord[1], image5, 1.2,coord[2],coord[3]);
                 position.type = 'aut';
                 tempImagePositions.push(position);
                 
@@ -104,14 +147,14 @@ const CartesianCoordinateSystem = ({width, height,scale,estructura}) => {
         
 
         //Se dibujan los almacenes
-        plotImageNotClickeable(12, 8, image, 1.7);
-        plotImageNotClickeable(42, 42, image2, 1.6);
-        plotImageNotClickeable(63, 3, image2, 1.6);
+        plotImageNotClickeable(13, 8, image, 1.7);
+        plotImageNotClickeable(43, 42, image2, 1.6);
+        plotImageNotClickeable(64, 3, image2, 1.6);
         
         //Se dibujan los puntos de llegada
         if (estructura && estructura.puntosDeLlegada) {
             estructura.puntosDeLlegada.forEach((coord) => {
-                const position = plotImage(coord[0], coord[1], image3, 0.9);
+                const position = plotImage(coord[0] + 1, coord[1], image3, 0.9);
                 position.type = 'endpoint';
                 tempImagePositions.push(position);
             });
@@ -176,12 +219,13 @@ const CartesianCoordinateSystem = ({width, height,scale,estructura}) => {
     const plotImage = (x, y, img, factor,placaVehi,tipoVehi) => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
-      
+        
         const adjustedX = x * scale;
         const adjustedY = canvas.height - y * scale;
-      
+
         const vertexX = Math.round(adjustedX / scale) * scale;
         const vertexY = Math.round(adjustedY / scale) * scale;
+
     
        //Definimos la posición de la imagen, su ancho y alto de acuerdo a la escala y factor
         const position = {
@@ -194,7 +238,7 @@ const CartesianCoordinateSystem = ({width, height,scale,estructura}) => {
           placa: placaVehi,
           tipo: tipoVehi,
         };
-      
+  
         ctx.drawImage(img, position.x, position.y, position.w, position.h);
     
         return position;
@@ -209,9 +253,12 @@ const CartesianCoordinateSystem = ({width, height,scale,estructura}) => {
       
         const vertexX = Math.round(adjustedX / scale) * scale;
         const vertexY = Math.round(adjustedY / scale) * scale;
+
+     
         ctx.drawImage(img, vertexX-scale/2, vertexY-scale/2, scale*factor, scale*factor);
     };
     
+  
     const plotLine = (x1, y1, x2, y2, color, thickness) => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");

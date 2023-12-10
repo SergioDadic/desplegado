@@ -45,7 +45,7 @@ function Vehiculos() {
         <BarraSuperior />
         <Box component="main" sx={{ flexGrow: 1, p: 3, paddingTop: 8 }}>
           <h2 className="tituloPagina">VEHICULOS</h2>
-          <BotonVerde texto={"Ingresar vehiculo"} camino={"NuevoVehiculo"} />
+          {/* <BotonVerde texto={"Ingresar vehiculo"} camino={"NuevoVehiculo"} /> */}
           <Container sx={estilosContenedorVehiculo}>
             <div
               style={{

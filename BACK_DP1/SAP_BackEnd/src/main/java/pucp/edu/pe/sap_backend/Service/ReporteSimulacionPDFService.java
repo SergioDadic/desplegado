@@ -63,8 +63,8 @@ public class ReporteSimulacionPDFService extends AbstractPdfView {
         tablaSubTitulo.setSpacingAfter(10);
 
 
-        PdfPTable tablaRutasEntregados = new PdfPTable(5);
-        tablaRutasEntregados.setWidths(new float[]{0.5f,1f,1f,1f,1.5f});
+        PdfPTable tablaRutasEntregados = new PdfPTable(8);
+        tablaRutasEntregados.setWidths(new float[]{0.5f,0.8f,1.5f,1f,1f,1f,1f,1.2f});
 
         celda = new PdfPCell(new Phrase("N#",fuenteTituloColumnas));
         celda.setBackgroundColor(Color.DARK_GRAY);
@@ -74,6 +74,14 @@ public class ReporteSimulacionPDFService extends AbstractPdfView {
         tablaRutasEntregados.addCell(celda);
 
         celda = new PdfPCell(new Phrase("TIPO DE VEHICULO",fuenteTituloColumnas));
+        celda.setBackgroundColor(Color.DARK_GRAY);
+        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+        celda.setPadding(10);
+        tablaRutasEntregados.addCell(celda);
+
+
+        celda = new PdfPCell(new Phrase("TRAMO DE RUTA",fuenteTituloColumnas));
         celda.setBackgroundColor(Color.DARK_GRAY);
         celda.setHorizontalAlignment(Element.ALIGN_CENTER);
         celda.setVerticalAlignment(Element.ALIGN_CENTER);
@@ -94,6 +102,21 @@ public class ReporteSimulacionPDFService extends AbstractPdfView {
         celda.setPadding(10);
         tablaRutasEntregados.addCell(celda);
 
+        celda = new PdfPCell(new Phrase("CLIENTE",fuenteTituloColumnas));
+        celda.setBackgroundColor(Color.DARK_GRAY);
+        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+        celda.setPadding(10);
+        tablaRutasEntregados.addCell(celda);
+
+        celda = new PdfPCell(new Phrase("ORDEN(GLP)",fuenteTituloColumnas));
+        celda.setBackgroundColor(Color.DARK_GRAY);
+        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+        celda.setPadding(10);
+        tablaRutasEntregados.addCell(celda);
+
+
         celda = new PdfPCell(new Phrase("PEDIDO",fuenteTituloColumnas));
         celda.setBackgroundColor(Color.DARK_GRAY);
         celda.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -101,10 +124,15 @@ public class ReporteSimulacionPDFService extends AbstractPdfView {
         celda.setPadding(10);
         tablaRutasEntregados.addCell(celda);
 
+        String rango ="";
         final int[] j = {1};
         for(Vehiculo lista: vehiculos){
+            int posicionFinal = lista.getRoute().size() - 1;
             for(Cell posicion : lista.getRoute()) {
                 for (Pedido pedido : lista.getOrder()) {
+                    rango ="[("+String.valueOf(lista.getXInicial())+","+String.valueOf(lista.getYInicial())+") : "+
+                            "("+String.valueOf(lista.getRoute().get(posicionFinal).getX())+","+
+                            String.valueOf(lista.getRoute().get(posicionFinal).getY())+")]" ;
                     if(pedido.getX() == posicion.getX() && pedido.getY() == posicion.getY()){
                         celda = new PdfPCell(new Phrase(String.valueOf(j[0]), fuenteDataCeldas));
                         celda.setPadding(5);
@@ -118,6 +146,11 @@ public class ReporteSimulacionPDFService extends AbstractPdfView {
                         celda.setVerticalAlignment(Element.ALIGN_CENTER);
                         tablaRutasEntregados.addCell(celda);
 
+                        celda = new PdfPCell(new Phrase(rango, fuenteDataCeldas));
+                        celda.setPadding(5);
+                        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+                        tablaRutasEntregados.addCell(celda);
 
                         celda = new PdfPCell(new Phrase(String.valueOf(posicion.getX()), fuenteDataCeldas));
                         celda.setPadding(5);
@@ -126,6 +159,18 @@ public class ReporteSimulacionPDFService extends AbstractPdfView {
                         tablaRutasEntregados.addCell(celda);
 
                         celda = new PdfPCell(new Phrase(String.valueOf(posicion.getY()), fuenteDataCeldas));
+                        celda.setPadding(5);
+                        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+                        tablaRutasEntregados.addCell(celda);
+
+                        celda = new PdfPCell(new Phrase(pedido.getNombrePedido(), fuenteDataCeldas));
+                        celda.setPadding(5);
+                        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+                        tablaRutasEntregados.addCell(celda);
+
+                        celda = new PdfPCell(new Phrase(String.valueOf(pedido.getCantidadAEntregar()), fuenteDataCeldas));
                         celda.setPadding(5);
                         celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                         celda.setVerticalAlignment(Element.ALIGN_CENTER);
@@ -145,97 +190,97 @@ public class ReporteSimulacionPDFService extends AbstractPdfView {
         tablaRutasEntregados.setSpacingAfter(30);
 
 
-
-        PdfPTable tablaRutas = new PdfPTable(5);
-        tablaRutas.setWidths(new float[]{0.5f,1f,1f,1f,1.5f});
-
-        celda = new PdfPCell(new Phrase("N#",fuenteTituloColumnas));
-        celda.setBackgroundColor(Color.DARK_GRAY);
-        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-        celda.setVerticalAlignment(Element.ALIGN_CENTER);
-        celda.setPadding(10);
-        tablaRutas.addCell(celda);
-
-        celda = new PdfPCell(new Phrase("TIPO DE VEHICULO",fuenteTituloColumnas));
-        celda.setBackgroundColor(Color.DARK_GRAY);
-        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-        celda.setVerticalAlignment(Element.ALIGN_CENTER);
-        celda.setPadding(10);
-        tablaRutas.addCell(celda);
-
-        celda = new PdfPCell(new Phrase("POSICION X",fuenteTituloColumnas));
-        celda.setBackgroundColor(Color.DARK_GRAY);
-        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-        celda.setVerticalAlignment(Element.ALIGN_CENTER);
-        celda.setPadding(10);
-        tablaRutas.addCell(celda);
-
-        celda = new PdfPCell(new Phrase("POSICION Y",fuenteTituloColumnas));
-        celda.setBackgroundColor(Color.DARK_GRAY);
-        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-        celda.setVerticalAlignment(Element.ALIGN_CENTER);
-        celda.setPadding(10);
-        tablaRutas.addCell(celda);
-
-        celda = new PdfPCell(new Phrase("PEDIDO",fuenteTituloColumnas));
-        celda.setBackgroundColor(Color.DARK_GRAY);
-        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-        celda.setVerticalAlignment(Element.ALIGN_CENTER);
-        celda.setPadding(10);
-        tablaRutas.addCell(celda);
-
-
-        final int[] n = {1};
-
-        for(Vehiculo lista: vehiculos){
-           for(Cell posicion : lista.getRoute()) {
-               for (Pedido pedido : lista.getOrder()) {
-                   celda = new PdfPCell(new Phrase(String.valueOf(n[0]), fuenteDataCeldas));
-                   celda.setPadding(5);
-                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                   celda.setVerticalAlignment(Element.ALIGN_CENTER);
-                   tablaRutas.addCell(celda);
-
-                   celda = new PdfPCell(new Phrase(lista.getTipo(), fuenteDataCeldas));
-                   celda.setPadding(5);
-                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                   celda.setVerticalAlignment(Element.ALIGN_CENTER);
-                   tablaRutas.addCell(celda);
-
-
-                   celda = new PdfPCell(new Phrase(String.valueOf(posicion.getX()), fuenteDataCeldas));
-                   celda.setPadding(5);
-                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                   celda.setVerticalAlignment(Element.ALIGN_CENTER);
-                   tablaRutas.addCell(celda);
-
-                   celda = new PdfPCell(new Phrase(String.valueOf(posicion.getY()), fuenteDataCeldas));
-                   celda.setPadding(5);
-                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                   celda.setVerticalAlignment(Element.ALIGN_CENTER);
-                   tablaRutas.addCell(celda);
-                   if(pedido.getX() == posicion.getX() && pedido.getY() == posicion.getY()){
-
-                       celda = new PdfPCell(new Phrase("ENTREGADO", fuenteResaltado));
-                       celda.setPadding(5);
-                       celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                       celda.setVerticalAlignment(Element.ALIGN_CENTER);
-                       tablaRutas.addCell(celda);
-
-                   }
-                   else{
-                       celda = new PdfPCell(new Phrase("-", fuenteDataCeldas));
-                       celda.setPadding(5);
-                       celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                       celda.setVerticalAlignment(Element.ALIGN_CENTER);
-                       tablaRutas.addCell(celda);
-                   }
-                   n[0]++;
-               }
-
-           }
-
-        }
+//
+//        PdfPTable tablaRutas = new PdfPTable(5);
+//        tablaRutas.setWidths(new float[]{0.5f,1f,1f,1f,1.5f});
+//
+//        celda = new PdfPCell(new Phrase("N#",fuenteTituloColumnas));
+//        celda.setBackgroundColor(Color.DARK_GRAY);
+//        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//        celda.setPadding(10);
+//        tablaRutas.addCell(celda);
+//
+//        celda = new PdfPCell(new Phrase("TIPO DE VEHICULO",fuenteTituloColumnas));
+//        celda.setBackgroundColor(Color.DARK_GRAY);
+//        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//        celda.setPadding(10);
+//        tablaRutas.addCell(celda);
+//
+//        celda = new PdfPCell(new Phrase("POSICION X",fuenteTituloColumnas));
+//        celda.setBackgroundColor(Color.DARK_GRAY);
+//        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//        celda.setPadding(10);
+//        tablaRutas.addCell(celda);
+//
+//        celda = new PdfPCell(new Phrase("POSICION Y",fuenteTituloColumnas));
+//        celda.setBackgroundColor(Color.DARK_GRAY);
+//        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//        celda.setPadding(10);
+//        tablaRutas.addCell(celda);
+//
+//        celda = new PdfPCell(new Phrase("PEDIDO",fuenteTituloColumnas));
+//        celda.setBackgroundColor(Color.DARK_GRAY);
+//        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//        celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//        celda.setPadding(10);
+//        tablaRutas.addCell(celda);
+//
+//
+//        final int[] n = {1};
+//
+//        for(Vehiculo lista: vehiculos){
+//           for(Cell posicion : lista.getRoute()) {
+//               for (Pedido pedido : lista.getOrder()) {
+//                   celda = new PdfPCell(new Phrase(String.valueOf(n[0]), fuenteDataCeldas));
+//                   celda.setPadding(5);
+//                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                   celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//                   tablaRutas.addCell(celda);
+//
+//                   celda = new PdfPCell(new Phrase(lista.getTipo(), fuenteDataCeldas));
+//                   celda.setPadding(5);
+//                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                   celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//                   tablaRutas.addCell(celda);
+//
+//
+//                   celda = new PdfPCell(new Phrase(String.valueOf(posicion.getX()), fuenteDataCeldas));
+//                   celda.setPadding(5);
+//                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                   celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//                   tablaRutas.addCell(celda);
+//
+//                   celda = new PdfPCell(new Phrase(String.valueOf(posicion.getY()), fuenteDataCeldas));
+//                   celda.setPadding(5);
+//                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                   celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//                   tablaRutas.addCell(celda);
+//                   if(pedido.getX() == posicion.getX() && pedido.getY() == posicion.getY()){
+//
+//                       celda = new PdfPCell(new Phrase("ENTREGADO", fuenteResaltado));
+//                       celda.setPadding(5);
+//                       celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                       celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//                       tablaRutas.addCell(celda);
+//
+//                   }
+//                   else{
+//                       celda = new PdfPCell(new Phrase("-", fuenteDataCeldas));
+//                       celda.setPadding(5);
+//                       celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                       celda.setVerticalAlignment(Element.ALIGN_CENTER);
+//                       tablaRutas.addCell(celda);
+//                   }
+//                   n[0]++;
+//               }
+//
+//           }
+//
+//        }
 
 
         String imagePath = "Extra/logo.png";
@@ -253,7 +298,7 @@ public class ReporteSimulacionPDFService extends AbstractPdfView {
         document.add(tablaTitulo);
         document.add(tablaSubTitulo);
         document.add(tablaRutasEntregados);
-        document.add(tablaRutas);
+        //document.add(tablaRutas);
 
 
     }

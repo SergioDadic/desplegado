@@ -15,7 +15,25 @@ export const axiosInicializaSimulacion = (duracion,fechaInicio) => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.get(`/back/api/v1/simulacion/genetico/iniciacion?durarion=${duracion}&fechaInicio=${fechaInicio}`);
+  return axiosClient.get(`/api/v1/simulacion/genetico/iniciacion?durarion=${duracion}&fechaInicio=${fechaInicio}`);
+};
+
+export const axiosInicializaOP = (duracion,fechaInicio) => {
+  /* */
+  axiosClient.interceptors.request.use(
+    async (config) => {
+      config.headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        method: "GET",
+      };
+      return config;
+    },
+    (error) => {
+      Promise.reject(error.response.data);
+    }
+  );
+  return axiosClient.get(`/api/v1/simulacion/diaria/iniciacion?durarion=${duracion}&fechaInicio=${fechaInicio}`);
 };
 
 export const axiosGetListaVehiculos = (limit,minutos,continuidad) => {
@@ -33,8 +51,27 @@ export const axiosGetListaVehiculos = (limit,minutos,continuidad) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.get(`/back/api/v1/simulacion/listarVehiculosFiltrado?limit=${limit}&minutos=${minutos}&continuidad=${continuidad}`);
+    return axiosClient.get(`/api/v1/simulacion/listarVehiculosFiltrado?limit=${limit}&minutos=${minutos}&continuidad=${continuidad}`);
   };
+
+  export const axiosGetListaVehiculosDiarios = (limit,minutos,continuidad) => {
+    /*  */
+    axiosClient.interceptors.request.use(
+      async (config) => {
+        config.headers = {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          method: "GET",
+        };
+        return config;
+      },
+      (error) => {
+        Promise.reject(error.response.data);
+      }
+    );
+    return axiosClient.get(`/api/v1/simulacion/diaria/listarVehiculosDiario?limit=${limit}&minutos=${minutos}&continuidad=${continuidad}`);
+  };
+
 
   export const axiosGetPedidosSeleccionados = () => {
     /*  */
@@ -51,7 +88,7 @@ export const axiosGetListaVehiculos = (limit,minutos,continuidad) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.get("/back/api/v1/simulacion/listarPedidosSeleccionados");
+    return axiosClient.get("/api/v1/simulacion/listarPedidosSeleccionados");
   };
 
   export const axiosGetVehiculosDisponibles = () => {
@@ -69,7 +106,7 @@ export const axiosGetListaVehiculos = (limit,minutos,continuidad) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.get("/back/api/v1/simulacion/listarVehiculosDisponibles");
+    return axiosClient.get("/api/v1/simulacion/listarVehiculosDisponibles");
   };
     
 
@@ -88,7 +125,7 @@ export const axiosGetListaVehiculos = (limit,minutos,continuidad) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.get(`/back/api/v1/simulacion/listarVehiculosSeleccionados?tipo=${tipo}`);
+    return axiosClient.get(`/api/v1/simulacion/listarVehiculosSeleccionados?tipo=${tipo}`);
   };
 
   export const axiosSetFlota = (body) => {
@@ -106,5 +143,5 @@ export const axiosGetListaVehiculos = (limit,minutos,continuidad) => {
         Promise.reject(error.response.data);
       }
     );
-    return axiosClient.post("/back/api/v1/simulacion/inicializarVehiculos", body);
+    return axiosClient.post("/api/v1/simulacion/inicializarVehiculos", body);
   };

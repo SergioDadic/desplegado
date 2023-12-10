@@ -132,6 +132,77 @@ public class PedidoBDService {
         return pedidos;
     }
 
+//    public LinkedList<Pedido> lecturaDePedidoDeArchivosDiario(){
+////        int anhoInicio=fechaInicio.getYear(),mesInicio=fechaInicio.getMonthValue();
+////        int anhoFin= fechaFin.getYear(), mesFin= fechaFin.getMonthValue();
+////        String fechaIni = String.valueOf(anhoInicio*100 + mesInicio);
+////        String fechaCierre = String.valueOf(anhoFin*100 + mesFin);
+//
+//        LinkedList<Pedido> pedidos = new LinkedList<>();
+//        List<String> nombreArchivos = new ArrayList<>();
+//
+//        int contador=0;
+//        //SACO LOS NOMBRES DE LOS ARCHIVOS QUE TENGO QUE LEER DE PEDIDOS
+//        if(root.toFile().exists()){
+//            File[] archivos = root.toFile().listFiles();
+//            for (File archivo : archivos){
+//                String palabra = "ventas";
+////                String nombreArchivoRealInicio = palabra.concat(fechaIni) ;
+////                String nombreArchivoRealFin = palabra.concat(fechaCierre);
+//                if(archivo.isFile()){
+//                    //if(archivo.getName().contains(nombreArchivoRealInicio) || archivo.getName().contains(nombreArchivoRealFin) ){
+//                        //se procesa el archivo
+//                        pedidos.addAll(procesarArchivoDiario(archivo,contador));
+//                   // }
+//                }
+//            }
+//        }
+//
+//        return pedidos;
+//    }
+
+    public LinkedList<Pedido> procesarArchivoDiario(InputStream inputStream, int contador,String nombre) {
+        LinkedList<Pedido> listaPedidos = new LinkedList<>();
+        int auxDD, auxHH, auxMM, auxX, auxY, auxCant, auxLimit;
+        int anhiMes = Integer.parseInt(nombre.substring(6, 12));
+        String nombrePedido;
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            int fechaEntero = 0;
+
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(":");
+                String duration = parts[0];
+                int days = Integer.parseInt(duration.split("d")[0]);
+                int hours = Integer.parseInt(duration.split("d")[1].split("h")[0]);
+                int minutes = Integer.parseInt(duration.split("h")[1].split("m")[0]);
+                fechaEntero = anhiMes * 100 + days;
+                auxDD = days;
+                auxHH = hours;
+                auxMM = minutes;
+                line = parts[1];
+                parts = line.split(",");
+                auxX = Integer.parseInt(parts[0]);
+                auxY = Integer.parseInt(parts[1]);
+                nombrePedido = parts[2];
+                auxCant = Integer.parseInt(parts[3].split("m")[0]);
+                auxLimit = Integer.parseInt(parts[4].split("h")[0]);
+
+                Pedido ped = new Pedido(contador, contador, auxX, auxY, auxCant, fechaEntero / 10000, fechaEntero % 10000, auxHH * 100 + auxMM, auxLimit, nombrePedido);
+                listaPedidos.add(ped);
+                contador++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return listaPedidos;
+    }
+
+
+
     public LinkedList<Pedido> procesarArchivo(File archivo,LocalDateTime fechaInicio,LocalDateTime fechaFin,int contador){
         LinkedList<Pedido> listaPedidos = new LinkedList<>();
         int  auxDD, auxHH, auxMM, auxX, auxY, auxCant, auxLimit;

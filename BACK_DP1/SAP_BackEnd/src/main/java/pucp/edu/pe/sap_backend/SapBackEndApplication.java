@@ -30,71 +30,6 @@ import java.util.List;
 public class SapBackEndApplication {
 
     public static void main(String[] args) {
-
-//        LocalDateTime dateTime = LocalDateTime.of(2024, 4, 1, 0, 1);
-////        LinkedList<Pedido> listaPedidos = LecturaDatos.lecturaDecliente(LocalDateTime.now(),1);
-//        LinkedList<Pedido> listaPedidos = LecturaDatos.lecturaDecliente(dateTime,7);
-//
-//        Collections.sort(listaPedidos);
-//
-//        for (Pedido ped: listaPedidos){
-//            System.out.println(ped.getPedidoDate()+"   " + ped.getLimitDate());
-//        }
-//
-//
-//        ArrayList<Vehiculo> listaVehiculos = new ArrayList<>();
-//        //CREACIÓN DE VEHICULOS
-//        //TIPO A
-//        for (int i=0;i<2;i++){
-//            Vehiculo vehiculo = new Vehiculo(i,50,12,8,2.5,25.0,12.5,15.0,"TA");
-//            listaVehiculos.add(vehiculo);
-//        }
-//        //TIPO B
-//        for (int i=0;i<4;i++){
-//            Vehiculo vehiculo = new Vehiculo(i,50,12,8,2.0,15.0,7.5,9.5,"TB");
-//            listaVehiculos.add(vehiculo);
-//        }
-//        //TIPO C
-//        for (int i=0;i<4;i++){
-//            Vehiculo vehiculo = new Vehiculo(i,50,12,8,1.5,10.0,5.0,6.5,"TC");
-//            listaVehiculos.add(vehiculo);
-//        }
-//        //TIPO D
-//        for (int i=0;i<10;i++){
-//            Vehiculo vehiculo = new Vehiculo(i,50,12,8,1.0,5.0,2.5,3.5,"TD");
-//            listaVehiculos.add(vehiculo);
-//        }
-//
-//        //ESTANDAR BASICO
-//        Genetico genetico = new Genetico(LocalDateTime.now(),listaVehiculos, new ArrayList<Almacen>());
-//
-////        genetico.setCars(listaVehiculos);
-////        genetico.setOrders(listaPedidos);
-//
-////      SIN BLOQUEOS
-////        BFS blocks = new BFS(new BlockMap(100,100));
-////
-////        genetico.setBlocks(blocks);
-//
-//        //CON BLOQUEOS
-//        BlockMap map = new BlockMap(100,100);
-//
-//        //bloquear  un camino
-//        map.getMap()[3][0] = new Blocknode();
-//        //map.getMap()[3][0].setBloqueado(false);
-//        map.getMap()[4][0] = new Blocknode();
-//        //map.getMap()[4][0].setBloqueado(false);
-//        map.getMap()[5][0] = new Blocknode();
-//        //map.getMap()[5][0].setBloqueado(false);
-//
-//        genetico.setBlocks(new BFS(map));
-////
-////        genetico.setCars(listaVehiculos);
-////        genetico.setOrders(listaPedidos);
-////        genetico.executeAlgorithm();
-//
-////        genetico.executeAlgorithm();
-
         SpringApplication.run(SapBackEndApplication.class, args);
     }
     @Bean
@@ -102,7 +37,9 @@ public class SapBackEndApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST","PUT", "DELETE");
+                registry.addMapping("/**")
+                        .allowedOrigins("*") // Replace with the allowed origins
+                        .allowedMethods("GET", "POST", "PUT", "DELETE");
             }
         };
     }

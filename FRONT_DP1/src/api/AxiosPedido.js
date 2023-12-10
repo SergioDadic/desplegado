@@ -16,7 +16,7 @@ export const axiosSetPedido = (body) => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.post("/back/api/v1/Pedido/guardar", body);
+  return axiosClient.post("/api/v1/simulacion/diaria/pedidoUnitario", body);
 };
 
 export const axiosGetPedido = () => {
@@ -41,7 +41,7 @@ export const axiosCargaMasivaPedidos = (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  return axios.post("back/api/v1/Pedido/CargaMasivaPedidos", formData, {
+  return axios.post("/api/v1/Pedido/CargaMasivaPedidos", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -63,9 +63,28 @@ export const axiosSetCargaMasivaPedidos = (formData) => {
       Promise.reject(error.response.data);
     }
   );
-  return axiosClient.post("back/api/v1/Pedido/CargaMasivaPedidos", formData, {
+  return axiosClient.post("/api/v1/Pedido/CargaMasivaPedidos", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
+
+export const axiosGetPedidoDiario = () => {
+  /*  */
+  axiosClient.interceptors.request.use(
+    async (config) => {
+      config.headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        method: "GET",
+      };
+      return config;
+    },
+    (error) => {
+      Promise.reject(error.response.data);
+    }
+  );
+  return axiosClient.get("/obtenerOrdenes");
+};
+

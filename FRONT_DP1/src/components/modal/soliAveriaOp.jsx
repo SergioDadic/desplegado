@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import InicioSimulacion from "@mui/icons-material/PlayArrow";
-import { axiosInicializaSimulacion } from "../../api/AxiosSimulacion";
+import { axiosInicializaOP } from "../../api/AxiosSimulacion";
 import { useNavigate } from "react-router-dom";
 
 const style = {
@@ -20,7 +20,7 @@ const style = {
 };
 
 export default function SoliAveriaOp(props) {
-  const { fechaTP, dateAux } = props;
+  const { fechaTP, dateAux,scale } = props;
 
   const navigate = useNavigate();
 
@@ -39,15 +39,17 @@ export default function SoliAveriaOp(props) {
   const [open, setOpen] = React.useState(false);
   
   const handleClose = () => setOpen(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => handleContinue();
 
   //Continuar sin registrar
   const handleContinue = () => {
-    axiosInicializaSimulacion(1, formatDate(fechaTP))
+    const auxDate = fechaTP.toDate();
+    axiosInicializaOP(1, formatDate(fechaTP))
       .then(() => {
-        navigate("/Simulacion", {
+        navigate("/Operacion", {
           state: {
-            dateAux,
+            auxDate,
+            scale,
           },
         });
       })

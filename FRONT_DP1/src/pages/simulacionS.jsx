@@ -94,9 +94,9 @@ const SimulacionS = ({
     const tasa_tiempo_incremento = 1;
 
     // v_tiempo con el que se dibuja
-    let v_tiempo;
+    let v_tiempo; //10080
     let aux_parada = convertToUnixTime(anio, mes, dia, hora, minuto); //Tiempo Unix del momento donde se inicia la simulacion
-    let parada = await sumarMinutosATiempoUnix(aux_parada, 10080); //Tiempo donde acaba la simulación semanal
+    let parada = await sumarMinutosATiempoUnix(aux_parada, 1040); //Tiempo donde acaba la simulación semanal
 
     //Recorre los 15 minutos
     while (tiempo_transcurrido <= tiempo_a_simular) {
@@ -229,6 +229,7 @@ const SimulacionS = ({
       contador_llamadas++;
       await sleep(130);
     }
+    console.log("Acabo");
   };
 
   /*Función para los tiempos UNIX*/

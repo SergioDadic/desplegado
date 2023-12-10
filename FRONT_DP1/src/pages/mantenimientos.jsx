@@ -21,7 +21,7 @@ function mantenimientos() {
                 <BarraSuperior/>
                 <Box component="main" sx={{ flexGrow: 1, p: 3,paddingTop: 8}}>
                     <h2 className='tituloPagina'>MANTENIMIENTOS</h2>
-                    <BotonVerde texto={"Ingresar mantenimiento"} camino ={"NuevoMantenimiento"}/>
+                    {/* <BotonVerde texto={"Ingresar mantenimiento"} camino ={"NuevoMantenimiento"}/> */}
                     <Container sx = {estilosContenedorMantenimiento}>
                         <InputWithIcon texto = {"Ingresar placa:"}/>
                     </Container>

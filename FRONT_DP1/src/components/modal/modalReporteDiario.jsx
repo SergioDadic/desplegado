@@ -125,7 +125,7 @@ const MensajeExito = ({ onClose }) => {
       >
         <ModalContent>
           <h2 id="unstyled-modal-title" className="modal-title">
-            Simulacion Semanal concluida con éxito
+            Operación diaria concluida con éxito
           </h2>
           <p id="unstyled-modal-description" className="modal-description">
             Se ha descargado el reporte.
